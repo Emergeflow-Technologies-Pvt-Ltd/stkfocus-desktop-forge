@@ -26,7 +26,7 @@ const createWindow = () => {
   mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 };
 
 const createWidgetWindow = () => {
@@ -34,7 +34,7 @@ const createWidgetWindow = () => {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
   const widgetWidth = 400;
-  const widgetHeight = 250;
+  const widgetHeight = 400;
   const taskbarHeight = height - primaryDisplay.workArea.height;
   const yPosition = height - taskbarHeight - widgetHeight;
 
@@ -42,7 +42,7 @@ const createWidgetWindow = () => {
     width: widgetWidth,
     height: widgetHeight,
     minWidth: widgetWidth,
-    minHeight: 200,
+    minHeight: 300,
     maxWidth: widgetWidth,
     resizable: true,
     x: width - widgetWidth,
@@ -57,7 +57,7 @@ const createWidgetWindow = () => {
   widgetWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/widget`);
 
   // Open the DevTools.
-  widgetWindow.webContents.openDevTools();
+  // widgetWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished

@@ -34,26 +34,27 @@ const StockWidget = ({ item }) => {
         flex: 1,
         border: `1px solid ${NEUTRALS[900]}`,
         borderRadius: "4px",
-        marginBottom: "12px",
       }}
     >
       <Flex direction="column" style={{ flex: 1 }}>
-        <Text fw={600}>{item.companyName}</Text>
-        <Text c={NEUTRALS[600]} size="sm">
+        <Text fw={600} size="sm">
+          {item.companyName}
+        </Text>
+        <Text c={NEUTRALS[600]} size="xs">
           {item.symbol} • {item.industry}
         </Text>
       </Flex>
-      <Flex direction="column">
+      {/* <Flex direction="column">
         <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
           WEEK HIGH: ₹{item.maxPrice}
         </Text>
         <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
           WEEK LOW: ₹{item.minPrice}
         </Text>
-      </Flex>
+      </Flex> */}
       <Divider size="sm" orientation="vertical" />
       <Flex direction="column" align="flex-end">
-        <Text fw={900} size="xl" ta="right">
+        <Text fw={900} size="lg" ta="right">
           ₹{item.lastPrice}
         </Text>
         <Flex align="center">
@@ -62,7 +63,12 @@ const StockWidget = ({ item }) => {
           ) : (
             <IconArrowDownRight color="red" />
           )}
-          <Text fw={500} color={isChangePositive ? "green" : "red"} ta="right">
+          <Text
+            fw={500}
+            color={isChangePositive ? "green" : "red"}
+            ta="right"
+            size="sm"
+          >
             {pChange}%
           </Text>
         </Flex>
@@ -86,11 +92,12 @@ const WidgetContent = () => {
       type="scroll"
       style={{
         flex: 1,
-        maxHeight: "500px",
+        // maxHeight: "500px",
       }}
     >
-      <Container
+      <Flex
         className="draggable"
+        direction={"column"}
         fluid
         style={{
           padding: "20px",
@@ -134,7 +141,6 @@ const WidgetContent = () => {
             </Flex>
           </Flex>
         </Paper>
-
         <Flex style={{ justifyContent: "center", marginTop: "20px" }}>
           <Advertisement
             style={{
@@ -142,7 +148,7 @@ const WidgetContent = () => {
             }}
           />
         </Flex>
-      </Container>
+      </Flex>
     </ScrollArea>
   );
 };

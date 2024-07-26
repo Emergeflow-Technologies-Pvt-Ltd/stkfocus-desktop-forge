@@ -33,7 +33,7 @@ export default function Settings() {
             align={"center"}
             gap={2}
             onClick={() => {
-              navigate("/home");
+              navigate("/");
             }}
             style={{
               cursor: "pointer",
