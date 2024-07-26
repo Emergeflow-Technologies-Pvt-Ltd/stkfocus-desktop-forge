@@ -10,19 +10,17 @@ import { getAuth } from "firebase/auth";
 
 // TODO: Change static config to dynamic config to be stored on server
 const firebaseConfig = {
-  apiKey: "AIzaSyB0k5idCbj3o1EmqgxcdZGojr44bl6c11w",
-  authDomain: "test-stockfocus.firebaseapp.com",
-  projectId: "test-stockfocus",
-  storageBucket: "test-stockfocus.appspot.com",
-  messagingSenderId: "530088277489",
-  appId: "1:530088277489:web:72423ab5f6042c33784050",
-  measurementId: "G-L27B9D5EGN",
+  apiKey: "AIzaSyBIfUlbKTAnIY2EhEScwRdBxbJckmuoo4I",
+  authDomain: "stk-focus.firebaseapp.com",
+  projectId: "stk-focus",
+  storageBucket: "stk-focus.appspot.com",
+  messagingSenderId: "419412412752",
+  appId: "1:419412412752:web:57f4c77701af70b9840455",
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 console.log("App is ", app);
-export const auth = getAuth(app);
+export const auth = getAuth();
 
 console.log("Auth is", auth);

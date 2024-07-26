@@ -7,14 +7,14 @@ import WidgetComponent from "./WidgetComponent.jsx";
 import HomePageWithContext from "./Homepage/HomePage.jsx";
 
 function Layout() {
-  const isUserLogined = true;
+  const isUserLoggedIn = false;
 
   return (
     <HashRouter>
       <Routes>
         <Route
           path="/"
-          element={isUserLogined ? <HomePageWithContext /> : <LoginPage />}
+          element={isUserLoggedIn ? <HomePageWithContext /> : <LoginPage />}
         />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/settings" element={<Settings />} />
