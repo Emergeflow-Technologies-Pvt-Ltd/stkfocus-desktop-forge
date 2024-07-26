@@ -185,6 +185,8 @@ export const HomePageContextwithProvider = ({ children, userId }) => {
             }
           : item
       );
+
+      // TODO: Remove logic, This will keep calling db every 10 seconds
       updatePocketBaseWatchlist(updatedWatchlist); // Update PocketBase
     }
   };

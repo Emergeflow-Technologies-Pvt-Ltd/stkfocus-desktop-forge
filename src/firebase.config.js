@@ -7,6 +7,8 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+// TODO: Change static config to dynamic config to be stored on server
 const firebaseConfig = {
   apiKey: "AIzaSyB0k5idCbj3o1EmqgxcdZGojr44bl6c11w",
   authDomain: "test-stockfocus.firebaseapp.com",
