@@ -28,11 +28,8 @@ function NetworkStatusIndicator() {
         gap={"md"}
         p={"sm"}
       >
-        <img
-          src={wifiOffIcon}
-          alt="wifi off icon"
-          style={{ height: "40px", fill: "#E04B4B" }}
-        />
+        <wifiOffIcon alt="wifi off icon" style={{ height: "40px" }} />
+
         <Text size="xl" fw={"bold"}>
           No internet connection !
         </Text>

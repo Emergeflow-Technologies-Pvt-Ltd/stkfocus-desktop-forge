@@ -12,10 +12,10 @@ export default function NavBar() {
       <Flex
         justify="space-between"
         align="center"
-        style={{ padding: "10px 20px" }}
+        style={{ padding: "10px 2px" }}
       >
         <Flex align="center" gap="xs">
-          <Logo alt="logo" style={{ width: "30px", height: "30px" }} />
+          <Logo alt="logo" style={{ width: "40px", height: "18px" }} />
           <Text
             style={{
               fontSize: "0.75rem",
@@ -27,6 +27,7 @@ export default function NavBar() {
         </Flex>
         <Flex
           minHeight={50}
+          justify="flex-end"
           align="center"
           direction="row"
           gap="md"

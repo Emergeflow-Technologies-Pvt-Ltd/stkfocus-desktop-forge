@@ -1,23 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Text, Title, Flex, ScrollArea, ActionIcon } from "@mantine/core";
 import {
-  Paper,
-  Text,
-  Title,
-  Flex,
-  Divider,
-  ScrollArea,
-  Button,
-  Container,
-} from "@mantine/core";
-import { IconArrowUpRight, IconArrowDownRight } from "@tabler/icons-react";
-import { NEUTRALS } from "../shared/colors.const.jsx";
+  IconArrowUpRight,
+  IconArrowDownRight,
+  IconArrowBackUp,
+} from "@tabler/icons-react";
+import { NEUTRALS, PRIMARY_COLORS } from "../shared/colors.const.jsx";
 import {
   HomePageContextwithProvider,
   useHomePageContext,
 } from "./Homepage/HomePage.context.jsx";
 import { WidgetContextProvider, useWidgetContext } from "./Widget.context.jsx";
 import Advertisement from "../../assets/advertise.svg";
+import Logo from "../../assets/logo.svg";
 
 const StockWidget = ({ item }) => {
   const pChange = parseFloat(item.pChange).toFixed(2);
@@ -27,7 +23,7 @@ const StockWidget = ({ item }) => {
     <Flex
       shadow="md"
       bg={NEUTRALS[1100]}
-      p="md"
+      p="5px"
       gap="xs"
       align="center"
       style={{
@@ -44,17 +40,8 @@ const StockWidget = ({ item }) => {
           {item.symbol} • {item.industry}
         </Text>
       </Flex>
-      {/* <Flex direction="column">
-        <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
-          WEEK HIGH: ₹{item.maxPrice}
-        </Text>
-        <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
-          WEEK LOW: ₹{item.minPrice}
-        </Text>
-      </Flex> */}
-      <Divider size="sm" orientation="vertical" />
       <Flex direction="column" align="flex-end">
-        <Text fw={900} size="lg" ta="right">
+        <Text fw={900} size="xs" ta="right">
           ₹{item.lastPrice}
         </Text>
         <Flex align="center">
@@ -67,7 +54,7 @@ const StockWidget = ({ item }) => {
             fw={500}
             color={isChangePositive ? "green" : "red"}
             ta="right"
-            size="sm"
+            size="xs"
           >
             {pChange}%
           </Text>
@@ -79,7 +66,6 @@ const StockWidget = ({ item }) => {
 
 const WidgetContent = () => {
   const navigate = useNavigate();
-  const { watchlist } = useHomePageContext();
   const { widgetStocks } = useWidgetContext();
 
   const goBack = () => {
@@ -88,68 +74,53 @@ const WidgetContent = () => {
   };
 
   return (
-    <ScrollArea
-      type="scroll"
+    <Flex
+      className="draggable"
+      direction="column"
       style={{
-        flex: 1,
-        // maxHeight: "500px",
+        height: "100vh",
+        backgroundColor: NEUTRALS[1100],
+        padding: "10px",
       }}
     >
       <Flex
         className="draggable"
-        direction={"column"}
-        fluid
-        style={{
-          padding: "20px",
-          backgroundColor: NEUTRALS[1100],
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
+        justify="space-between"
+        align="center"
+        mb="sm"
       >
-        <Paper
-          bg={NEUTRALS[1100]}
-          withBorder
-          py="sm"
-          pl="sm"
-          pr="xs"
-          mt="sm"
-          style={{
-            flex: 1, // Take available space
-            display: "flex",
-            flexDirection: "column",
-            maxWidth: "400px",
-            margin: "auto",
-          }}
-        >
-          <Flex direction={"column"} rowGap={34} gap="xs">
-            <Title
-              order={1}
-              style={{ fontSize: "1.5rem", fontStyle: "italic" }}
-            >
-              Stkfocus
-            </Title>
-
-            <Button className="no-drag" onClick={goBack} fullWidth>
-              GO BACK
-            </Button>
-
-            <Flex direction={"column"} rowGap={12}>
-              {widgetStocks.map((stock) => (
-                <StockWidget key={stock.symbol} item={stock} />
-              ))}
-            </Flex>
-          </Flex>
-        </Paper>
-        <Flex style={{ justifyContent: "center", marginTop: "20px" }}>
-          <Advertisement
-            style={{
-              alignItems: "center",
-            }}
-          />
+        <Flex align="center" className="draggable">
+          <Logo style={{ width: "35px", height: "12px" }} />
+          <Title order={1} style={{ fontSize: "0.75rem", fontStyle: "italic" }}>
+            Stkfocus
+          </Title>
         </Flex>
+        <ActionIcon
+          className="no-drag"
+          variant="outline"
+          c={PRIMARY_COLORS.blue_main}
+          size="xs"
+          radius="xl"
+          onClick={goBack}
+        >
+          <IconArrowBackUp />
+        </ActionIcon>
       </Flex>
-    </ScrollArea>
+
+      <div className="no-drag" style={{ flex: 1, overflow: "hidden" }}>
+        <ScrollArea style={{ height: "100%" }}>
+          <Flex direction="column" gap="xs">
+            {widgetStocks.map((stock) => (
+              <StockWidget key={stock.symbol} item={stock} />
+            ))}
+          </Flex>
+        </ScrollArea>
+      </div>
+
+      <Flex justify="center" mt="10px" className="draggable">
+        <Advertisement style={{ alignItems: "center" }} />
+      </Flex>
+    </Flex>
   );
 };
 

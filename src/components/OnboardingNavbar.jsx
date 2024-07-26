@@ -8,7 +8,7 @@ export default function OnboardingNavbar() {
     <Container fluid bg={NEUTRALS[900]}>
       <Flex align="center" style={{ padding: "10px 20px" }}>
         <Flex align="center" gap="xs">
-          <Logo alt="logo" style={{ width: "30px", height: "30px" }} />
+          <Logo alt="logo" style={{ width: "40px", height: "18px" }} />
           <Text
             style={{
               fontSize: "0.75rem",
