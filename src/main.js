@@ -33,13 +33,21 @@ const createWidgetWindow = () => {
   const { screen } = require("electron");
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
+  const widgetWidth = 400;
+  const widgetHeight = 250;
+  const taskbarHeight = height - primaryDisplay.workArea.height;
+  const yPosition = height - taskbarHeight - widgetHeight;
 
   widgetWindow = new BrowserWindow({
-    width: 300,
-    height: 400,
-    x: width - 320,
-    y: height - 420,
-    frame: true,
+    width: widgetWidth,
+    height: widgetHeight,
+    minWidth: widgetWidth,
+    minHeight: 200,
+    maxWidth: widgetWidth,
+    resizable: true,
+    x: width - widgetWidth,
+    y: yPosition,
+    frame: false,
     alwaysOnTop: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,

@@ -86,8 +86,6 @@ export const HomePageContextwithProvider = ({ children, userId }) => {
       } else {
         await pb.collection("watchlist").create(data);
       }
-
-      setWatchlist(newWatchlist);
     } catch (error) {
       console.error("Failed to update watchlist in PocketBase:", error);
     }
@@ -147,7 +145,8 @@ export const HomePageContextwithProvider = ({ children, userId }) => {
               }
             : item
         );
-        updatePocketBaseWatchlist(updatedWatchlist); // Update PocketBase
+        setWatchlist(updatedWatchlist);
+        updatePocketBaseWatchlist(updatedWatchlist); // Update PocketBase only when adding to watchlist
         showNotification({
           title: "Stock Added",
           message: `${stock.Symbol} has been added to your watchlist`,
@@ -173,21 +172,20 @@ export const HomePageContextwithProvider = ({ children, userId }) => {
   const updateWatchlistItem = async (symbol) => {
     const stockData = await fetchStockData(symbol);
     if (stockData) {
-      const updatedWatchlist = watchlist.map((item) =>
-        item.symbol === symbol
-          ? {
-              ...item,
-              industry: stockData.industry,
-              pChange: stockData.pChange,
-              price: stockData.lastPrice,
-              maxPrice: stockData.maxPrice,
-              minPrice: stockData.minPrice,
-            }
-          : item
+      setWatchlist((prevWatchlist) =>
+        prevWatchlist.map((item) =>
+          item.symbol === symbol
+            ? {
+                ...item,
+                industry: stockData.industry,
+                pChange: stockData.pChange,
+                price: stockData.lastPrice,
+                maxPrice: stockData.maxPrice,
+                minPrice: stockData.minPrice,
+              }
+            : item
+        )
       );
-
-      // TODO: Remove logic, This will keep calling db every 10 seconds
-      updatePocketBaseWatchlist(updatedWatchlist); // Update PocketBase
     }
   };
 
@@ -203,7 +201,7 @@ export const HomePageContextwithProvider = ({ children, userId }) => {
     setError(null);
     const updatedWatchlist = watchlist.filter((item) => item.symbol !== symbol);
     setWatchlist(updatedWatchlist);
-    updatePocketBaseWatchlist(updatedWatchlist); // Update PocketBase
+    updatePocketBaseWatchlist(updatedWatchlist); // Update PocketBase when removing from watchlist
     showNotification({
       title: "Stock Removed",
       message: `${symbol} has been removed from your watchlist`,
@@ -229,6 +227,7 @@ export const HomePageContextwithProvider = ({ children, userId }) => {
         searchError,
         setSearchError,
         openWidget,
+        fetchStockData,
       }}
     >
       {children}

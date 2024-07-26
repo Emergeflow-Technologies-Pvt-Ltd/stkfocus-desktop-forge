@@ -1,38 +1,47 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import PocketBase from "pocketbase";
-
-const pb = new PocketBase("http://127.0.0.1:8090"); // Replace with your PocketBase URL
+import { useHomePageContext } from "./Homepage/HomePage.context.jsx";
 
 const WidgetContext = createContext();
 
-export const WidgetContextProvider = ({ children, userId }) => {
-  const [watchlist, setWatchlist] = useState([]);
-
-  const fetchWatchlistData = async () => {
-    try {
-      const record = await pb
-        .collection("watchlist")
-        .getFirstListItem(`userId="${userId}"`);
-      setWatchlist(record.watchlistItems || []);
-    } catch (error) {
-      console.error("Failed to fetch watchlist data:", error);
-      setWatchlist([]);
-    }
-  };
+export const WidgetContextProvider = ({ children }) => {
+  const { fetchStockData } = useHomePageContext();
+  const [widgetStocks, setWidgetStocks] = useState([]);
 
   useEffect(() => {
-    fetchWatchlistData();
-    const unsubscribe = pb.collection("watchlist").subscribe("*", (e) => {
-      if (e.action === "update" && e.record.userId === userId) {
-        setWatchlist(e.record.watchlistItems);
-      }
-    });
+    const fetchHardcodedStocks = async () => {
+      const symbols = ["INFY", "RELIANCE", "YESBANK"];
+      const stocksData = await Promise.all(
+        symbols.map(async (symbol) => {
+          const data = await fetchStockData(symbol);
+          return { symbol, ...data };
+        })
+      );
+      setWidgetStocks(stocksData);
+    };
 
-    return () => unsubscribe();
-  }, [userId]);
+    fetchHardcodedStocks();
+  }, [fetchStockData]);
+
+  useEffect(() => {
+    const updateWidgetStocks = async () => {
+      const updatedStocks = await Promise.all(
+        widgetStocks.map(async (stock) => {
+          const updatedData = await fetchStockData(stock.symbol);
+          return { ...stock, ...updatedData };
+        })
+      );
+      setWidgetStocks(updatedStocks);
+    };
+
+    // Set up interval for updates every 10 seconds
+    const intervalId = setInterval(updateWidgetStocks, 10000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [widgetStocks, fetchStockData]);
 
   return (
-    <WidgetContext.Provider value={{ watchlist, fetchWatchlistData }}>
+    <WidgetContext.Provider value={{ widgetStocks }}>
       {children}
     </WidgetContext.Provider>
   );
