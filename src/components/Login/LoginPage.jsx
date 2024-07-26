@@ -31,19 +31,18 @@ function LoginPage() {
   const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
 
   function onCaptchVerify() {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {
-          size: "invisible",
-          callback: (response) => {
-            onSignup();
-          },
-          "expired-callback": () => {},
-        }
-      );
-    }
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: (response) => {
+          console.log("Callback Called!!!", response);
+          // onSignup();
+        },
+        "expired-callback": () => {},
+      }
+    );
   }
 
   function onSignup(phoneNumber) {
@@ -55,7 +54,7 @@ function LoginPage() {
       const phoneNumberWithPrefix = "+91" + phoneNumber;
       console.log("phoneNumberWithPrefix", phoneNumberWithPrefix);
 
-      signInWithPhoneNumber(auth, phoneNumberWithPrefix, appVerifier)
+      signInWithPhoneNumber(auth, "+919766760151", appVerifier)
         .then((confirmationResult) => {
           console.log("Confirmation Result", confirmationResult);
           window.confirmationResult = confirmationResult;

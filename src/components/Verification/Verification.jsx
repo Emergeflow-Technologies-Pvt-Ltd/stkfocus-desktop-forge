@@ -36,7 +36,7 @@ function Verification({ mobileNumber, backToLoginScreen }) {
         if (res._tokenResponse.isNewUser) {
           navigate("/signup");
         } else {
-          navigate("/home");
+          navigate("/");
         }
         return null;
       })
