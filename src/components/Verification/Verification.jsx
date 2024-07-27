@@ -28,6 +28,9 @@ function Verification({ mobileNumber, backToLoginScreen }) {
         // eslint-disable-next-line no-underscore-dangle
         console.log(res._tokenResponse);
         setUser(res.user);
+
+        // TODO: Set isUserLoggedIn (received from Layout.context) to true
+
         notifications.show({
           title: "Succesfully Verified !!",
           color: "green",

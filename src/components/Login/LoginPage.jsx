@@ -54,7 +54,7 @@ function LoginPage() {
       const phoneNumberWithPrefix = "+91" + phoneNumber;
       console.log("phoneNumberWithPrefix", phoneNumberWithPrefix);
 
-      signInWithPhoneNumber(auth, "+919766760151", appVerifier)
+      signInWithPhoneNumber(auth, phoneNumberWithPrefix, appVerifier)
         .then((confirmationResult) => {
           console.log("Confirmation Result", confirmationResult);
           window.confirmationResult = confirmationResult;

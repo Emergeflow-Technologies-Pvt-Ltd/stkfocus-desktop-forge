@@ -19,6 +19,9 @@ const StockWidget = ({ item }) => {
   const pChange = parseFloat(item.pChange).toFixed(2);
   const isChangePositive = pChange > 0;
 
+  // TODO: Add loader while stocks are loading
+  //
+
   return (
     <Flex
       shadow="md"

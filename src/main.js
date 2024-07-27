@@ -16,11 +16,14 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      contextIsolation: true,
-      nodeIntegration: false,
+      // contextIsolation: true,
+      // nodeIntegration: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      nativeWindowOpen: true,
     },
   });
+
+  console.log("createWindow: ", MAIN_WINDOW_WEBPACK_ENTRY);
 
   // and load the index.html of the app.
   mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
@@ -51,12 +54,14 @@ const createWidgetWindow = () => {
     alwaysOnTop: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-      contextIsolation: true,
-      nodeIntegration: false,
+      nativeWindowOpen: true,
     },
   });
 
-  widgetWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/widget`);
+  // TODO: Check if we can pass watchlist data to widget page inside extraHeaders
+  widgetWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/widget`, {
+    extraHeaders: { watchListData: ["INFY", "YES"] },
+  });
 
   // Open the DevTools.
   // widgetWindow.webContents.openDevTools();

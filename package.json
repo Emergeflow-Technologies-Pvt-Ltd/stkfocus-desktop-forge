@@ -31,7 +31,8 @@
     "electron": "31.2.1",
     "node-loader": "^2.0.0",
     "react-svg-loader": "^3.0.3",
-    "style-loader": "^3.0.0"
+    "style-loader": "^3.0.0",
+    "webpack-cli": "^5.1.4"
   },
   "keywords": [],
   "author": {
