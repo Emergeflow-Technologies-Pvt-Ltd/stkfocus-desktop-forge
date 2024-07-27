@@ -5,27 +5,17 @@ import SignUp from "./SignUp/SignUp.jsx";
 import Settings from "./Settings/Settings.jsx";
 import WidgetComponent from "./WidgetComponent.jsx";
 import HomePageWithContext from "./Homepage/HomePage.jsx";
-import { auth } from "../firebase.config.js";
+import { LayoutProvider, useLayoutContext } from "./Layout.context.jsx";
 
 function LayoutContainer() {
-  // TODO: Create context of layout,
-  // store isUserLoggedIn state in context
-  let isUserLoggedIn = false;
-
-  console.log("auth", { auth });
-  console.log("auth.currentUser", auth.currentUser);
-
-  if (auth.currentUser !== null) {
-    isUserLoggedIn = true;
-  }
+  const { isUserLoggedIn } = useLayoutContext();
 
   return (
     <HashRouter>
       <Routes>
         <Route
           path="/"
-          // element={isUserLoggedIn ? <HomePageWithContext /> : <LoginPage />}
-          element={<HomePageWithContext />}
+          element={isUserLoggedIn ? <HomePageWithContext /> : <LoginPage />}
         />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/settings" element={<Settings />} />
@@ -37,10 +27,9 @@ function LayoutContainer() {
 
 const Layout = () => {
   return (
-    // TODO: Wrap layout context provider here
-    <div>
+    <LayoutProvider>
       <LayoutContainer />
-    </div>
+    </LayoutProvider>
   );
 };
 

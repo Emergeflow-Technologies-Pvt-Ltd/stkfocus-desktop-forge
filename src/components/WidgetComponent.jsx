@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Text, Title, Flex, ScrollArea, ActionIcon } from "@mantine/core";
+import {
+  Text,
+  Title,
+  Flex,
+  ScrollArea,
+  ActionIcon,
+  Loader,
+} from "@mantine/core";
 import {
   IconArrowUpRight,
   IconArrowDownRight,
@@ -18,9 +25,6 @@ import Logo from "../../assets/logo.svg";
 const StockWidget = ({ item }) => {
   const pChange = parseFloat(item.pChange).toFixed(2);
   const isChangePositive = pChange > 0;
-
-  // TODO: Add loader while stocks are loading
-  //
 
   return (
     <Flex
@@ -70,6 +74,18 @@ const StockWidget = ({ item }) => {
 const WidgetContent = () => {
   const navigate = useNavigate();
   const { widgetStocks } = useWidgetContext();
+  const [loading, setLoading] = useState(true);
+  const [watchlistData, setWatchlistData] = useState([]);
+  useEffect(() => {
+    // Simulate data fetching
+    const fetchData = async () => {
+      // Mock API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setLoading(false);
+    };
+
+    fetchData();
+  }, []);
 
   const goBack = () => {
     navigate("/home");
@@ -113,9 +129,15 @@ const WidgetContent = () => {
       <div className="no-drag" style={{ flex: 1, overflow: "hidden" }}>
         <ScrollArea style={{ height: "100%" }}>
           <Flex direction="column" gap="xs">
-            {widgetStocks.map((stock) => (
-              <StockWidget key={stock.symbol} item={stock} />
-            ))}
+            {loading ? (
+              <Flex justify="center" align="center" style={{ height: "100%" }}>
+                <Loader color={PRIMARY_COLORS.blue_main} />
+              </Flex>
+            ) : (
+              widgetStocks.map((stock) => (
+                <StockWidget key={stock.symbol} item={stock} />
+              ))
+            )}
           </Flex>
         </ScrollArea>
       </div>

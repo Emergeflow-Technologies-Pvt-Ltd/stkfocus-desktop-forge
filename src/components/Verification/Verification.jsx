@@ -6,7 +6,9 @@ import { auth } from "../../firebase.config.js";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { NEUTRALS, PRIMARY_COLORS } from "../../shared/colors.const.jsx";
 import { useNavigate } from "react-router-dom";
+import { useLayoutContext } from "../Layout.context.jsx"; // Adjust the import path as needed
 function Verification({ mobileNumber, backToLoginScreen }) {
+  const { setIsUserLoggedIn } = useLayoutContext();
   const verificationCodeRegex = /^\d{6}$/;
   const navigate = useNavigate();
   const form = useForm({
@@ -25,17 +27,17 @@ function Verification({ mobileNumber, backToLoginScreen }) {
     window.confirmationResult
       .confirm(form.values.verificationCode)
       .then(async (res) => {
-        // eslint-disable-next-line no-underscore-dangle
         console.log(res._tokenResponse);
         setUser(res.user);
 
-        // TODO: Set isUserLoggedIn (received from Layout.context) to true
+        // Set isUserLoggedIn to true
+        setIsUserLoggedIn(true);
 
         notifications.show({
-          title: "Succesfully Verified !!",
+          title: "Successfully Verified!",
           color: "green",
         });
-        // eslint-disable-next-line no-underscore-dangle
+
         if (res._tokenResponse.isNewUser) {
           navigate("/signup");
         } else {
@@ -46,7 +48,7 @@ function Verification({ mobileNumber, backToLoginScreen }) {
       .catch((err) => {
         console.log(err);
         notifications.show({
-          title: "Enter correct verification code !!",
+          title: "Enter correct verification code!",
           color: "red",
         });
       });
