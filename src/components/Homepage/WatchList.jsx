@@ -16,9 +16,12 @@ import {
 } from "@tabler/icons-react";
 import { NEUTRALS } from "../../shared/colors.const.jsx";
 import { useHomePageContext } from "./HomePage.context.jsx";
+import { useLayoutContext } from "../Layout.context.jsx";
 
 export default function WatchList({ watchlist }) {
-  const { removeFromWatchlist, error } = useHomePageContext();
+  const { error } = useHomePageContext();
+
+  const { removeFromWatchlist } = useLayoutContext();
 
   return (
     <Paper

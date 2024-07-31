@@ -2,6 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("electronAPI", {
+  ipcRenderer: ipcRenderer,
   launchWidget: () => ipcRenderer.send("create-widget-window"),
   createMainWindow: () => ipcRenderer.send("create-main-window"),
   getWatchlist: (userId) => {

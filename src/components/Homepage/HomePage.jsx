@@ -19,10 +19,12 @@ import {
   useHomePageContext,
 } from "./HomePage.context.jsx";
 import { useNavigate } from "react-router-dom";
+import { useLayoutContext } from "../Layout.context.jsx";
 
 const HomePage = () => {
-  const { watchlist, error, isAddingToWatchlist, openWidget } =
-    useHomePageContext();
+  const { error, openWidget } = useHomePageContext();
+
+  const { watchlist, isAddingToWatchlist } = useLayoutContext();
 
   const navigate = useNavigate();
 
@@ -59,7 +61,7 @@ const HomePage = () => {
                 bg={PRIMARY_COLORS["blue_main"]}
                 onClick={handleLaunchWidget}
                 styles={{
-                  label: { color: "black" },
+                  label: { color: "white" },
                 }}
               >
                 <Icon />

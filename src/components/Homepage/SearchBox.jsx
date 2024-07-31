@@ -13,15 +13,12 @@ import {
 import { IconPlus } from "@tabler/icons-react";
 import { useHomePageContext } from "./HomePage.context.jsx";
 import { NEUTRALS } from "../../shared/colors.const.jsx";
+import { useLayoutContext } from "../Layout.context.jsx";
 export default function SearchBox() {
-  const {
-    searchResults,
-    searchTerm,
-    setSearchTerm,
-    addToWatchlist,
-    isLoading,
-    searchError,
-  } = useHomePageContext();
+  const { searchResults, searchTerm, setSearchTerm, isLoading, searchError } =
+    useHomePageContext();
+
+  const { addToWatchlist } = useLayoutContext();
 
   const handleSearch = (event) => {
     setSearchTerm(event.currentTarget.value);

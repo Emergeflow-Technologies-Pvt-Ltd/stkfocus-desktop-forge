@@ -1,6 +1,6 @@
 const { FusesPlugin } = require("@electron-forge/plugin-fuses");
 const { FuseV1Options, FuseVersion } = require("@electron/fuses");
-
+require("dotenv").config();
 module.exports = {
   packagerConfig: {
     asar: true,
@@ -22,6 +22,18 @@ module.exports = {
     {
       name: "@electron-forge/maker-rpm",
       config: {},
+    },
+  ],
+  publishers: [
+    {
+      name: "@electron-forge/publisher-github",
+      config: {
+        repository: {
+          owner: "Emergeflow-Technologies-Pvt-Ltd",
+          name: "stkfocus-desktop-forge",
+        },
+        prerelease: true,
+      },
     },
   ],
   plugins: [

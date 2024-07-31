@@ -55,6 +55,19 @@ def get_data():
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 400
+@app.route('/api/get_nifty_data')
+def getNiftyData():
+    try:
+        output = requests.get("https://www.nseindia.com/api/marketStatus",headers=headers).json()
+        #print(output)
+        return output['marketState'][0]
+    except Exception as e: 
+        print(f"Error: {str(e)}")
+        return jsonify({"error": str(e)}), 400
+       
+   
+x=getNiftyData()
+print(x)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, threaded=True)
+    app.run(host='0.0.0.0', port=8000, threaded=True, debug=False)

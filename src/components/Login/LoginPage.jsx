@@ -170,7 +170,7 @@ function LoginPage() {
                 bg={PRIMARY_COLORS["blue_main"]}
                 onClick={handleLaunchWidget}
                 styles={{
-                  label: { color: "black" },
+                  label: { color: "white" },
                 }}
               >
                 Launch Widget

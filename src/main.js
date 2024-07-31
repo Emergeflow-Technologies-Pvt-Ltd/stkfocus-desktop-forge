@@ -1,17 +1,24 @@
 const { app, BrowserWindow, session, ipcMain } = require("electron");
 const path = require("node:path");
 const { spawn } = require("child_process");
+const { autoUpdater } = require("electron-updater");
+const log = require("electron-log");
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// Initialize logging
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = "info";
+
+log.info("App starting...");
+
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
 let mainWindow;
 let widgetWindow;
-let watchlist = [];
+let watchlist = ["INFY", "RELIANCE"];
+
 const createWindow = () => {
-  // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -22,11 +29,15 @@ const createWindow = () => {
     },
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
+  mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`, {
+    extraHeaders: {
+      watchlist: JSON.stringify(watchlist),
+    },
+  });
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.on("did-finish-load", () => {
+    autoUpdater.checkForUpdatesAndNotify();
+  });
 };
 
 const createWidgetWindow = () => {
@@ -56,17 +67,13 @@ const createWidgetWindow = () => {
     },
   });
 
-  widgetWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/widget`, {
-    extraHeaders: { watchListData: ["INFY", "YES"] },
-  });
   widgetWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/widget`);
-  // Open the DevTools.
-  // widgetWindow.webContents.openDevTools();
+
+  widgetWindow.webContents.on("did-finish-load", () => {
+    widgetWindow.webContents.send("receive-watchlist", watchlist);
+  });
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
@@ -80,8 +87,9 @@ app.whenReady().then(() => {
   spawn("python", ["./server/server.py"]);
   createWindow();
 
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
+  // Check for updates as soon as the app is ready
+  autoUpdater.checkForUpdatesAndNotify();
+
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -89,21 +97,25 @@ app.whenReady().then(() => {
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
-ipcMain.handle("get-watchlist", async (event, userId) => {
-  return event.sender.send("get-watchlist-renderer", userId);
+
+ipcMain.handle("send-watchlist-to-widget", async () => {
+  if (widgetWindow) {
+    widgetWindow.webContents.send("receive-watchlist", watchlist);
+  }
 });
 
 ipcMain.handle("update-watchlist", async (event, userId, watchlistItems) => {
-  return event.sender.send("update-watchlist-renderer", userId, watchlistItems);
+  watchlist = watchlistItems;
+  if (widgetWindow) {
+    widgetWindow.webContents.send("receive-watchlist", watchlist);
+  }
 });
+
 ipcMain.on("create-widget-window", () => {
   if (mainWindow) {
     mainWindow.close();
@@ -119,7 +131,20 @@ ipcMain.on("create-main-window", () => {
   }
   createWindow();
 });
-// Handle the 'launch-widget' event
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+// Auto-update event handlers
+autoUpdater.on("update-available", () => {
+  if (mainWindow) {
+    mainWindow.webContents.send("update_available");
+  }
+});
+
+autoUpdater.on("update-downloaded", () => {
+  if (mainWindow) {
+    mainWindow.webContents.send("update_downloaded");
+  }
+});
+
+ipcMain.on("restart_app", () => {
+  autoUpdater.quitAndInstall();
+});
