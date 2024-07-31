@@ -1,11 +1,9 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { auth } from "../firebase.config.js";
 import Papa from "papaparse";
-import PocketBase from "pocketbase";
 import { showNotification } from "@mantine/notifications";
 import { IconX, IconCheck } from "@tabler/icons-react";
-
-const pb = new PocketBase("http://127.0.0.1:8090");
+import pb from "../shared/pocketbase.js";
 
 const LayoutContext = createContext();
 
