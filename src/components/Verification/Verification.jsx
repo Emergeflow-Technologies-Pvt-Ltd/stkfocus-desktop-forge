@@ -8,9 +8,10 @@ import { NEUTRALS, PRIMARY_COLORS } from "../../shared/colors.const.jsx";
 import { useNavigate } from "react-router-dom";
 import { useLayoutContext } from "../Layout.context.jsx"; // Adjust the import path as needed
 function Verification({ mobileNumber, backToLoginScreen }) {
-  const { setIsUserLoggedIn } = useLayoutContext();
+  const { setIsUserLoggedIn, setAppUserId } = useLayoutContext();
   const verificationCodeRegex = /^\d{6}$/;
   const navigate = useNavigate();
+
   const form = useForm({
     initialValues: {
       verificationCode: "",
@@ -37,6 +38,9 @@ function Verification({ mobileNumber, backToLoginScreen }) {
           title: "Successfully Verified!",
           color: "green",
         });
+
+        // Set App User Id
+        setAppUserId(res._tokenResponse.localId);
 
         if (res._tokenResponse.isNewUser) {
           navigate("/signup");

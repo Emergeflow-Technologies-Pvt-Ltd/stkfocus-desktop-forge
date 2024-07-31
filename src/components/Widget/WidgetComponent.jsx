@@ -17,16 +17,13 @@ import {
   IconPointFilled,
   IconPoint,
 } from "@tabler/icons-react";
-import { NEUTRALS, PRIMARY_COLORS } from "../shared/colors.const.jsx";
-import {
-  HomePageContextwithProvider,
-  useHomePageContext,
-} from "./Homepage/HomePage.context.jsx";
+import { NEUTRALS, PRIMARY_COLORS } from "../../shared/colors.const.jsx";
+
 import { WidgetContextProvider, useWidgetContext } from "./Widget.context.jsx";
-import Advertisement from "../../assets/advertise.svg";
-import Logo from "../../assets/logo.svg";
-import HelpIcon from "../../assets/helpLogo.svg";
-import { useLayoutContext } from "./Layout.context.jsx";
+import Advertisement from "../../../assets/advertise.svg";
+import Logo from "../../../assets/logo.svg";
+import HelpIcon from "../../../assets/helpLogo.svg";
+import { useLayoutContext } from "../Layout.context.jsx";
 
 const StockWidget = ({ item }) => {
   const pChange = parseFloat(item.pChange).toFixed(2);
@@ -55,7 +52,7 @@ const StockWidget = ({ item }) => {
       </Flex>
       <Flex direction="column" align="flex-end">
         <Text fw={900} size="xs" ta="right">
-          ₹{item.lastPrice}
+          ₹{item.price}
         </Text>
         <Flex align="center">
           {isChangePositive ? (
@@ -77,32 +74,31 @@ const StockWidget = ({ item }) => {
   );
 };
 
-const WidgetContent = () => {
+const WidgetComponentContainer = () => {
   const navigate = useNavigate();
   const { watchlist } = useLayoutContext();
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [watchlistData, setWatchlistData] = useState([]);
   const [niftyData, setNiftyData] = useState({});
 
   const fetchNiftyData = async () => {
     try {
       const response = await fetch("http://localhost:8000/api/get_nifty_data");
       const data = await response.json();
-      console.log(data);
       setNiftyData(data);
     } catch (e) {
       console.error(e);
     }
   };
 
+  const fetchData = async () => {
+    // Mock API call
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setLoading(false);
+  };
+
   useEffect(() => {
     // Simulate data fetching
-    const fetchData = async () => {
-      // Mock API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setLoading(false);
-    };
 
     fetchData();
     fetchNiftyData();
@@ -252,17 +248,11 @@ const WidgetContent = () => {
   );
 };
 
-const WidgetComponentContainer = () => (
-  <WidgetContextProvider>
-    <WidgetContent />
-  </WidgetContextProvider>
-);
-
 const WidgetComponent = () => {
   return (
-    <HomePageContextwithProvider>
+    <WidgetContextProvider>
       <WidgetComponentContainer />
-    </HomePageContextwithProvider>
+    </WidgetContextProvider>
   );
 };
 

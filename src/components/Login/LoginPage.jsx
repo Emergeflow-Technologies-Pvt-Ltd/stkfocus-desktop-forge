@@ -36,10 +36,6 @@ function LoginPage() {
       "recaptcha-container",
       {
         size: "invisible",
-        callback: (response) => {
-          console.log("Callback Called!!!", response);
-          // onSignup();
-        },
         "expired-callback": () => {},
       }
     );

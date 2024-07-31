@@ -8,11 +8,11 @@ module.exports = {
   module: {
     rules: require("./webpack.rules"),
   },
-  devServer: {
-    host: "0.0.0.0", // Set the host to 127.0.0.1
-    port: 4000,
-    historyApiFallback: true,
-    // hot: true,
-    // Other devServer options...
-  },
+  // devServer: {
+  //   host: "172.20.10.2", // Set the host to 127.0.0.1
+  //   port: 4000,
+  //   historyApiFallback: true,
+  //   // hot: true,
+  //   // Other devServer options...
+  // },
 };

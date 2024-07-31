@@ -20,14 +20,29 @@ let watchlist = ["INFY", "RELIANCE"];
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 1000,
     height: 600,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      webSecurity: false,
     },
   });
+
+  function UpsertKeyValue(obj, keyToChange, value) {
+    const keyToChangeLower = keyToChange.toLowerCase();
+    for (const key of Object.keys(obj)) {
+      if (key.toLowerCase() === keyToChangeLower) {
+        // Reassign old key
+        obj[key] = value;
+        // Done
+        return;
+      }
+    }
+    // Insert at end instead
+    obj[keyToChange] = value;
+  }
 
   mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`, {
     extraHeaders: {
@@ -36,8 +51,28 @@ const createWindow = () => {
   });
 
   mainWindow.webContents.on("did-finish-load", () => {
+    console.log("Checking for updates!");
     autoUpdater.checkForUpdatesAndNotify();
   });
+
+  // mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+  //   (details, callback) => {
+  //     const { requestHeaders } = details;
+  //     UpsertKeyValue(requestHeaders, "Access-Control-Allow-Origin", ["*"]);
+  //     callback({ requestHeaders });
+  //   }
+  // );
+
+  // mainWindow.webContents.session.webRequest.onHeadersReceived(
+  //   (details, callback) => {
+  //     const { responseHeaders } = details;
+  //     UpsertKeyValue(responseHeaders, "Access-Control-Allow-Origin", ["*"]);
+  //     UpsertKeyValue(responseHeaders, "Access-Control-Allow-Headers", ["*"]);
+  //     callback({
+  //       responseHeaders,
+  //     });
+  //   }
+  // );
 };
 
 const createWidgetWindow = () => {

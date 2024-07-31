@@ -83,10 +83,10 @@ export default function WatchList({ watchlist }) {
                     </Flex>
                     <Flex direction="column">
                       <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
-                        WEEK HIGH: ₹{item.maxPrice}
+                        HIGH: ₹{item.maxPrice}
                       </Text>
                       <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
-                        WEEK LOW: ₹{item.minPrice}
+                        LOW: ₹{item.minPrice}
                       </Text>
                     </Flex>
                     <Divider size="sm" orientation="vertical" />

@@ -3,9 +3,9 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import LoginPage from "./Login/LoginPage.jsx";
 import SignUp from "./SignUp/SignUp.jsx";
 import Settings from "./Settings/Settings.jsx";
-import WidgetComponent from "./WidgetComponent.jsx";
 import HomePageWithContext from "./Homepage/HomePage.jsx";
 import { LayoutProvider, useLayoutContext } from "./Layout.context.jsx";
+import WidgetComponent from "./Widget/WidgetComponent.jsx";
 
 function LayoutContainer() {
   const { isUserLoggedIn } = useLayoutContext();

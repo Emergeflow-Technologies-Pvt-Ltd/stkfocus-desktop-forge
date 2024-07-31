@@ -5,22 +5,89 @@ import { showNotification } from "@mantine/notifications";
 import { IconX, IconCheck } from "@tabler/icons-react";
 import pb from "../shared/pocketbase.js";
 
-const LayoutContext = createContext();
+const LayoutContext = createContext({
+  addToWatchlist: () => {},
+  isUserLoggedIn: false,
+  appUserId: "",
+  setAppUserId: () => {},
+});
 
 export const LayoutProvider = ({ children }) => {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [watchlist, setWatchlist] = useState([]);
   const [isAddingToWatchlist, setIsAddingToWatchlist] = useState(false);
+  const [appUserId, setAppUserId] = useState();
+  // const userId = "aaaaa";
 
   const fetchWatchlistData = async () => {
     try {
       const record = await pb
         .collection("watchlist")
-        .getFirstListItem(`userId="${userId}"`);
+        .getFirstListItem(`appUserId="${appUserId}"`);
       setWatchlist(record.watchlistItems || []);
     } catch (error) {
       console.error("Failed to fetch watchlist data:", error);
       setWatchlist([]);
+    }
+  };
+
+  const processAPIResponse = async (data) => {
+    return {
+      symbol: data["info"]["symbol"],
+      companyName: data["info"]["companyName"],
+      industry: data["info"]["industry"],
+      lastPrice: data["priceInfo"]["lastPrice"],
+      change: data["priceInfo"]["change"],
+      pChange: data["priceInfo"]["pChange"],
+      maxPrice: data["priceInfo"]["intraDayHighLow"]["max"],
+      minPrice: data["priceInfo"]["intraDayHighLow"]["min"],
+    };
+  };
+
+  const fetchStockDataDirectlyFromNSE = async (symbol) => {
+    try {
+      // const response = await fetch(
+      //   `http://localhost:8000/api/get_data?symbol=${symbol}`
+      // );
+
+      const headers = new Headers({
+        // Connection: "keep-alive",
+        "Cache-Control": "max-age=0",
+        DNT: "1",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36",
+        "Sec-Fetch-User": "?1",
+        Accept:
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-Mode": "navigate",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Language": "en-US,en;q=0.9,hi;q=0.8",
+      });
+
+      let data = null;
+
+      const response = await fetch(
+        `https://nseindia.com/api/quote-equity?symbol=${symbol}`,
+        { method: "GET", headers: headers }
+      );
+
+      if (response.status !== 200) {
+        await fetch("https://nseindia.com", {
+          method: "GET",
+          headers: headers,
+        });
+        data = {};
+      } else {
+        data = await response.json();
+        data = processAPIResponse(data);
+      }
+
+      return data;
+    } catch (error) {
+      console.error(`Error fetching data for ${symbol}:`, error);
+      return null;
     }
   };
 
@@ -41,13 +108,13 @@ export const LayoutProvider = ({ children }) => {
   const updatePocketBaseWatchlist = async (newWatchlist) => {
     try {
       const data = {
-        userId: userId,
+        appUserId: appUserId,
         watchlistItems: newWatchlist,
       };
 
       const existingRecord = await pb
         .collection("watchlist")
-        .getFirstListItem(`userId="${userId}"`)
+        .getFirstListItem(`appUserId="${appUserId}"`)
         .catch(() => null);
 
       if (existingRecord) {
@@ -172,8 +239,12 @@ export const LayoutProvider = ({ children }) => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      watchlist.forEach((item) => updateWatchlistItem(item.symbol));
-    }, 10000); // 10 seconds
+      watchlist.forEach((item, index) => {
+        setTimeout(() => {
+          updateWatchlistItem(item.symbol);
+        }, index * 1000);
+      });
+    }, 17000); // 17 seconds
 
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, [watchlist]);
@@ -183,8 +254,19 @@ export const LayoutProvider = ({ children }) => {
       setIsUserLoggedIn(!!user);
     });
 
+    if (auth.currentUser) {
+      setAppUserId(auth.currentUser.uid);
+    }
+
     return () => unsubscribe();
-  }, []);
+  }, [auth.currentUser]);
+
+  useEffect(() => {
+    if (appUserId) {
+      console.log("Fetch Watchlist Data");
+      fetchWatchlistData();
+    }
+  }, [appUserId]);
 
   return (
     <LayoutContext.Provider
@@ -197,6 +279,8 @@ export const LayoutProvider = ({ children }) => {
         isAddingToWatchlist,
         removeFromWatchlist,
         fetchStockData,
+        appUserId,
+        setAppUserId,
       }}
     >
       {children}

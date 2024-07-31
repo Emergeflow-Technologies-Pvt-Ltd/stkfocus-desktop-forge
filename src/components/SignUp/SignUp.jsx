@@ -11,18 +11,26 @@ import {
   STATE_WISE_CITIES,
 } from "../../shared/constants/general.const.js";
 import pb from "../../shared/pocketbase.js";
+import { useLayoutContext } from "../Layout.context.jsx";
+import { useNavigate } from "react-router-dom";
+
 function SignUp() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const STATES = Object.keys(STATE_WISE_CITIES);
+
+  const { appUserId } = useLayoutContext();
+  const navigate = useNavigate();
+
   const form = useForm({
     initialValues: {
       firstName: "",
       lastName: "",
       email: "",
       dateOfBirth: null,
-      gender: "",
-      state: "",
-      city: "",
+      gender: null,
+      state: null,
+      city: null,
+      appUserId: "",
     },
     validate: {
       firstName: isNotEmpty("First Name is required"),
@@ -40,8 +48,9 @@ function SignUp() {
       city: isNotEmpty("City is required"),
     },
   });
+
   const submitFormAction = async () => {
-    // console.log(form.values);
+    form.setFieldValue("appUserId");
     try {
       const record = await pb.collection("users").create(form.values);
       notifications.show({
@@ -55,6 +64,8 @@ function SignUp() {
       });
     }
     form.reset();
+
+    navigate("/");
   };
   return (
     <>
