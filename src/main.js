@@ -36,9 +36,7 @@ const createWindow = () => {
     },
   });
 
-  // mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
-  mainWindow.loadURL("http://localhost:4000/main_window#/");
-  // mainWindow.loadURL("stkfocus://index.html");
+  mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
 
   mainWindow.webContents.on("did-finish-load", () => {
     console.log("Checking for updates!");

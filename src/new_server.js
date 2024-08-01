@@ -16,11 +16,7 @@ const server = app.listen(PORT, () => {
 });
 
 app.get("/", (req, res) => {
-  res.sendFile(
-    "D:\\Projects-Code\\stkfocus-desktop-forge\\.webpack\\renderer\\main_window\\index.html"
-  );
-  console.log("Dirname", __dirname);
-  //   res.sendFile(__dirname + "/index.html");
+  res.send("Hello World!");
 });
 
 app.get("/api/get_data", async (req, res) => {
