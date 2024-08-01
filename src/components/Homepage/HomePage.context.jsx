@@ -28,24 +28,6 @@ export const HomePageContextwithProvider = ({ children, userId }) => {
     setIsLoading(false);
   }, [searchTerm]);
 
-  const openWidget = () => {
-    window.electronAPI.createWidgetWindow(watchlist);
-  };
-
-  // Fetching data from NSE
-  const fetchStockData = async (symbol) => {
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/get_data?symbol=${symbol}`
-      );
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error(`Error fetching data for ${symbol}:`, error);
-      return null;
-    }
-  };
-
   return (
     <HomePageContext.Provider
       value={{
@@ -58,8 +40,6 @@ export const HomePageContextwithProvider = ({ children, userId }) => {
         isAddingToWatchlist,
         searchError,
         setSearchError,
-        openWidget,
-        fetchStockData,
       }}
     >
       {children}

@@ -14,16 +14,11 @@ import WatchList from "./WatchList.jsx";
 import SearchBox from "./SearchBox.jsx";
 
 import { NEUTRALS, PRIMARY_COLORS } from "../../shared/colors.const.jsx";
-import {
-  HomePageContextwithProvider,
-  useHomePageContext,
-} from "./HomePage.context.jsx";
+import { HomePageContextwithProvider } from "./HomePage.context.jsx";
 import { useNavigate } from "react-router-dom";
 import { useLayoutContext } from "../Layout.context.jsx";
 
 const HomePage = () => {
-  const { error, openWidget } = useHomePageContext();
-
   const { watchlist, isAddingToWatchlist } = useLayoutContext();
 
   const navigate = useNavigate();

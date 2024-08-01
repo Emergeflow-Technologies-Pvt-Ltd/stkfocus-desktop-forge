@@ -15,7 +15,7 @@ function LayoutContainer() {
       <Routes>
         <Route
           path="/"
-          element={isUserLoggedIn ? <HomePageWithContext /> : <LoginPage />}
+          element={true ? <HomePageWithContext /> : <LoginPage />}
         />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/settings" element={<Settings />} />

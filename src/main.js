@@ -1,8 +1,10 @@
-const { app, BrowserWindow, session, ipcMain } = require("electron");
-const path = require("node:path");
+const { app, BrowserWindow, session, ipcMain, screen } = require("electron");
 const { spawn } = require("child_process");
 const { autoUpdater } = require("electron-updater");
 const log = require("electron-log");
+
+const expApp = require("./new_server");
+console.log("app", expApp);
 
 // Initialize logging
 autoUpdater.logger = log;
@@ -18,6 +20,10 @@ let mainWindow;
 let widgetWindow;
 let watchlist = ["INFY", "RELIANCE"];
 
+const appPath = app.getAppPath();
+
+console.log("appPath", appPath);
+
 const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1000,
@@ -30,53 +36,17 @@ const createWindow = () => {
     },
   });
 
-  function UpsertKeyValue(obj, keyToChange, value) {
-    const keyToChangeLower = keyToChange.toLowerCase();
-    for (const key of Object.keys(obj)) {
-      if (key.toLowerCase() === keyToChangeLower) {
-        // Reassign old key
-        obj[key] = value;
-        // Done
-        return;
-      }
-    }
-    // Insert at end instead
-    obj[keyToChange] = value;
-  }
-
-  mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`, {
-    extraHeaders: {
-      watchlist: JSON.stringify(watchlist),
-    },
-  });
+  // mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
+  mainWindow.loadURL("http://localhost:4000/main_window#/");
+  // mainWindow.loadURL("stkfocus://index.html");
 
   mainWindow.webContents.on("did-finish-load", () => {
     console.log("Checking for updates!");
     autoUpdater.checkForUpdatesAndNotify();
   });
-
-  // mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
-  //   (details, callback) => {
-  //     const { requestHeaders } = details;
-  //     UpsertKeyValue(requestHeaders, "Access-Control-Allow-Origin", ["*"]);
-  //     callback({ requestHeaders });
-  //   }
-  // );
-
-  // mainWindow.webContents.session.webRequest.onHeadersReceived(
-  //   (details, callback) => {
-  //     const { responseHeaders } = details;
-  //     UpsertKeyValue(responseHeaders, "Access-Control-Allow-Origin", ["*"]);
-  //     UpsertKeyValue(responseHeaders, "Access-Control-Allow-Headers", ["*"]);
-  //     callback({
-  //       responseHeaders,
-  //     });
-  //   }
-  // );
 };
 
 const createWidgetWindow = () => {
-  const { screen } = require("electron");
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.workAreaSize;
   const widgetWidth = 400;
@@ -119,7 +89,8 @@ app.whenReady().then(() => {
     });
   });
 
-  spawn("python", ["./server/server.py"]);
+  // spawn("node", ["./server/server.js"]);
+
   createWindow();
 
   // Check for updates as soon as the app is ready

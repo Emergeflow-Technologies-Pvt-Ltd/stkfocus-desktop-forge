@@ -94,7 +94,7 @@ export const LayoutProvider = ({ children }) => {
   const fetchStockData = async (symbol) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/api/get_data?symbol=${symbol}`
+        `http://localhost:4000/api/get_data?symbol=${symbol}`
       );
       const data = await response.json();
       return data;

@@ -83,7 +83,7 @@ const WidgetComponentContainer = () => {
 
   const fetchNiftyData = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/get_nifty_data");
+      const response = await fetch("http://localhost:4000/api/get_nifty_data");
       const data = await response.json();
       setNiftyData(data);
     } catch (e) {
