@@ -7,20 +7,15 @@ import { DatePickerInput } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import pb from "../../../shared/pocketbase";
-import { NEUTRALS, PRIMARY_COLORS } from "../../../shared/colors.const.jsx";
 import { Flex, Text, Grid, TextInput, Select, Button } from "@mantine/core";
 import EditIcon from "../../../../assets/edit-icon.svg";
 import moment from "moment";
-import { signOut } from "firebase/auth";
-import { auth } from "../../../firebase.config.js";
-import { useNavigate } from "react-router-dom";
 import { useLayoutContext } from "../../Layout.context.jsx";
 function ProfileDetails() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const STATES = Object.keys(STATE_WISE_CITIES);
   const [isEditing, setIsEditing] = useState(false);
 
-  const navigate = useNavigate();
   const { appUserId, userDetails, fetchUserDetails } = useLayoutContext();
 
   const form = useForm({
@@ -79,11 +74,6 @@ function ProfileDetails() {
       });
     }
     setIsEditing(false);
-  };
-
-  const handleLogout = () => {
-    navigate("/");
-    signOut(auth);
   };
 
   const cancelEditing = () => {
