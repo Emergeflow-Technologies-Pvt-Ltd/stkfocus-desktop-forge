@@ -10,6 +10,7 @@ const LayoutContext = createContext({
   isUserLoggedIn: false,
   appUserId: "",
   setAppUserId: () => {},
+  isLoading: true,
 });
 
 export const LayoutProvider = ({ children }) => {
@@ -19,6 +20,7 @@ export const LayoutProvider = ({ children }) => {
   const [isAddingToWatchlist, setIsAddingToWatchlist] = useState(false);
   const [appUserId, setAppUserId] = useState();
   const [userDetails, setUserDetails] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   // const userId = "aaaaa";
 
   const fetchUserDetails = async (userId) => {
@@ -305,8 +307,10 @@ export const LayoutProvider = ({ children }) => {
   }, [watchlist]);
 
   useEffect(() => {
+    setIsLoading(true);
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setIsUserLoggedIn(!!user);
+      setIsLoading(false);
     });
 
     if (auth.currentUser) {
@@ -340,6 +344,7 @@ export const LayoutProvider = ({ children }) => {
         setAppUserId,
         userDetails,
         fetchUserDetails,
+        isLoading,
       }}
     >
       {children}

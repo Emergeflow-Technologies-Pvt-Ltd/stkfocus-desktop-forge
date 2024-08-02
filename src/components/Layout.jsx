@@ -6,22 +6,30 @@ import Settings from "./Settings/Settings.jsx";
 import HomePageWithContext from "./Homepage/HomePage.jsx";
 import { LayoutProvider, useLayoutContext } from "./Layout.context.jsx";
 import WidgetComponent from "./Widget/WidgetComponent.jsx";
+import { Loader } from "@mantine/core";
 
 function LayoutContainer() {
-  const { isUserLoggedIn } = useLayoutContext();
+  const { isUserLoggedIn, isLoading } = useLayoutContext();
 
   return (
-    <HashRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={isUserLoggedIn ? <HomePageWithContext /> : <LoginPage />}
-        />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/widget" element={<WidgetComponent />} />
-      </Routes>
-    </HashRouter>
+    <>
+      {/* TODO: Loader should be in center of the page */}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <HashRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={isUserLoggedIn ? <HomePageWithContext /> : <LoginPage />}
+            />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/widget" element={<WidgetComponent />} />
+          </Routes>
+        </HashRouter>
+      )}
+    </>
   );
 }
 
