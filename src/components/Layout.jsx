@@ -6,7 +6,7 @@ import Settings from "./Settings/Settings.jsx";
 import HomePageWithContext from "./Homepage/HomePage.jsx";
 import { LayoutProvider, useLayoutContext } from "./Layout.context.jsx";
 import WidgetComponent from "./Widget/WidgetComponent.jsx";
-import { Loader } from "@mantine/core";
+import { Loader, Flex } from "@mantine/core";
 
 function LayoutContainer() {
   const { isUserLoggedIn, isLoading } = useLayoutContext();
@@ -15,7 +15,9 @@ function LayoutContainer() {
     <>
       {/* TODO: Loader should be in center of the page */}
       {isLoading ? (
-        <Loader />
+        <Flex flex={1} h={"100vh"} justify={"center"} align={"center"}>
+          <Loader size={"lg"} />
+        </Flex>
       ) : (
         <HashRouter>
           <Routes>
