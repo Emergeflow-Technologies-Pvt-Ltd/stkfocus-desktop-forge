@@ -49,4 +49,14 @@ app.get("/api/get_nifty_data", async (req, res) => {
   });
 });
 
+// app.get("/api/get_all_stock_symbols", async (req, res) => {
+//   const response = await nseIndia.getAllStockSymbols().then((symbols) => {
+//     return symbols;
+//   });
+
+//   res.json({
+//     symbolsList: response,
+//   });
+// });
+
 export default app;

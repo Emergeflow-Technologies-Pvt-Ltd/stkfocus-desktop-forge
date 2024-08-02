@@ -137,7 +137,7 @@ function ProfileDetails() {
       </Flex>
       <Flex direction="column" align="center" gap="1.5rem">
         <Grid w="100%" gutter="lg">
-          <Grid.Col span={{ base: 12, md: 6 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <TextInput
               label="First Name"
               placeholder="First Name"
@@ -145,7 +145,7 @@ function ProfileDetails() {
               {...form.getInputProps("firstName")}
             />
           </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 6 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <TextInput
               label="Last Name"
               placeholder="Last Name"
@@ -162,7 +162,7 @@ function ProfileDetails() {
           {...form.getInputProps("email")}
         />
         <Grid w="100%" gutter="lg">
-          <Grid.Col span={{ base: 12, md: 6 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <DatePickerInput
               label="Date of Birth"
               placeholder="DD/MM/YY"
@@ -171,7 +171,7 @@ function ProfileDetails() {
               {...form.getInputProps("dateOfBirth")}
             />
           </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 6 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <Select
               label="Gender"
               placeholder="Select gender"
@@ -183,7 +183,7 @@ function ProfileDetails() {
           </Grid.Col>
         </Grid>
         <Grid w="100%" gutter="lg">
-          <Grid.Col span={{ base: 12, md: 6 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <Select
               label="State"
               placeholder="Select state"
@@ -200,7 +200,7 @@ function ProfileDetails() {
               }}
             />
           </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 6 }}>
+          <Grid.Col span={{ base: 12, sm: 6 }}>
             <Select
               label="City"
               placeholder="Select city"
@@ -214,9 +214,6 @@ function ProfileDetails() {
             />
           </Grid.Col>
         </Grid>
-        <Button mt={12} onClick={handleLogout}>
-          Logout
-        </Button>
       </Flex>
     </Flex>
   );

@@ -13,7 +13,6 @@ function LayoutContainer() {
 
   return (
     <>
-      {/* TODO: Loader should be in center of the page */}
       {isLoading ? (
         <Flex flex={1} h={"100vh"} justify={"center"} align={"center"}>
           <Loader size={"lg"} />
