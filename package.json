@@ -1,14 +1,16 @@
 {
   "name": "forge-demo",
-  "productName": "Stkfocus",
-  "version": "1.1.0",
+  "productName": "stkfocus",
+  "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "build": {
-    "files": [
-      "server.exe",
-      "index.js",
-      "preload.js"
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Emergeflow-Technologies-Pvt-Ltd",
+        "repo": "stkfocus-desktop-forge"
+      }
     ]
   },
   "scripts": {

@@ -58,7 +58,7 @@ const HomePage = () => {
                 bg={PRIMARY_COLORS["blue_main"]}
                 onClick={handleLaunchWidget}
                 styles={{
-                  label: { color: "white" },
+                  label: { color: "black" },
                 }}
               >
                 <Icon />
@@ -67,7 +67,7 @@ const HomePage = () => {
             </Grid.Col>
           </Grid>
           <Grid>
-            <Flex gap="md" style={{ width: "100%" }}>
+            <Flex gap="md" style={{ width: "100%", height: "100%" }}>
               <Paper
                 withBorder
                 p="md"

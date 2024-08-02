@@ -1,14 +1,19 @@
 const { app, BrowserWindow, session, ipcMain, screen } = require("electron");
-const { spawn } = require("child_process");
-const { autoUpdater } = require("electron-updater");
+const { updateElectronApp, UpdateSourceType } = require("update-electron-app");
 const log = require("electron-log");
-
+// Check for updates as soon as the app is ready
+updateElectronApp({
+  updateSource: {
+    host: "https://update.electronjs.org",
+    type: UpdateSourceType.ElectronPublicUpdateService,
+    repo: "Emergeflow-Technologies-Pvt-Ltd/stkfocus-desktop-forge",
+  },
+  logger: log,
+});
 const expApp = require("./new_server");
 console.log("app", expApp);
 
 // Initialize logging
-autoUpdater.logger = log;
-autoUpdater.logger.transports.file.level = "info";
 
 log.info("App starting...");
 
@@ -21,7 +26,6 @@ let widgetWindow;
 let watchlist = ["INFY", "RELIANCE"];
 
 const appPath = app.getAppPath();
-
 console.log("appPath", appPath);
 
 const createWindow = () => {
@@ -39,8 +43,7 @@ const createWindow = () => {
   mainWindow.loadURL(`${MAIN_WINDOW_WEBPACK_ENTRY}#/`);
 
   mainWindow.webContents.on("did-finish-load", () => {
-    console.log("Checking for updates!");
-    autoUpdater.checkForUpdatesAndNotify();
+    log.info("Checking for updates!");
   });
 };
 
@@ -91,9 +94,6 @@ app.whenReady().then(() => {
 
   createWindow();
 
-  // Check for updates as soon as the app is ready
-  autoUpdater.checkForUpdatesAndNotify();
-
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -136,19 +136,21 @@ ipcMain.on("create-main-window", () => {
   createWindow();
 });
 
-// Auto-update event handlers
-autoUpdater.on("update-available", () => {
-  if (mainWindow) {
-    mainWindow.webContents.send("update_available");
-  }
-});
+// // Auto-update event handlers
+// autoUpdater.on("update-available", () => {
+//   log.info("Update available.");
+//   if (mainWindow) {
+//     mainWindow.webContents.send("update_available");
+//   }
+// });
 
-autoUpdater.on("update-downloaded", () => {
-  if (mainWindow) {
-    mainWindow.webContents.send("update_downloaded");
-  }
-});
+// autoUpdater.on("update-downloaded", () => {
+//   log.info("Update downloaded.");
+//   if (mainWindow) {
+//     mainWindow.webContents.send("update_downloaded");
+//   }
+// });
 
-ipcMain.on("restart_app", () => {
-  autoUpdater.quitAndInstall();
-});
+// ipcMain.on("restart_app", () => {
+//   autoUpdater.quitAndInstall();
+// });

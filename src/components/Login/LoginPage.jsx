@@ -161,16 +161,16 @@ function LoginPage() {
               >
                 Get OTP
               </Button>
-              <Button
+              {/* <Button
                 mt="md"
                 bg={PRIMARY_COLORS["blue_main"]}
                 onClick={handleLaunchWidget}
                 styles={{
-                  label: { color: "white" },
+                  label: { color: "black" },
                 }}
               >
                 Launch Widget
-              </Button>
+              </Button> */}
               {/* <Text c="#8996A9">
                 New user ?{' '}
                 <span
