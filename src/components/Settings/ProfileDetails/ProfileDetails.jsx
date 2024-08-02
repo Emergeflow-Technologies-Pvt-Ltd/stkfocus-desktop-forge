@@ -21,7 +21,7 @@ function ProfileDetails() {
   const [isEditing, setIsEditing] = useState(false);
 
   const navigate = useNavigate();
-  const { appUserId } = useLayoutContext();
+  const { appUserId, userDetails, fetchUserDetails } = useLayoutContext();
 
   const form = useForm({
     initialValues: {
@@ -49,12 +49,10 @@ function ProfileDetails() {
       city: isNotEmpty("City is required"),
     },
   });
-  const getUserDetails = async (userId) => {
-    const record = await pb
-      .collection("users")
-      .getFirstListItem(`appUserId="${userId}"`);
+
+  const initializeWithOrginalData = (user) => {
     const { firstName, lastName, email, dateOfBirth, gender, state, city } =
-      record;
+      user;
     form.setValues({
       firstName: firstName,
       lastName: lastName,
@@ -65,6 +63,7 @@ function ProfileDetails() {
       city: city,
     });
   };
+
   const editDetails = async (userId) => {
     try {
       const record = await pb.collection("users").update(userId, form.values);
@@ -72,7 +71,7 @@ function ProfileDetails() {
         title: "Succesfully Updated",
         color: "green",
       });
-      getUserDetails(userId);
+      fetchUserDetails(appUserId);
     } catch {
       notifications.show({
         title: "Some error occurred while updating data",
@@ -89,11 +88,11 @@ function ProfileDetails() {
 
   const cancelEditing = () => {
     setIsEditing(false);
-    getUserDetails(appUserId);
+    initializeWithOrginalData(userDetails);
   };
 
   useEffect(() => {
-    getUserDetails(appUserId);
+    initializeWithOrginalData(userDetails);
   }, [appUserId]);
 
   return (
@@ -102,7 +101,7 @@ function ProfileDetails() {
       gap={"1rem"}
       component="form"
       onSubmit={form.onSubmit(() => {
-        editDetails(appUserId);
+        editDetails(userDetails.id);
       })}
     >
       <Flex align={"center"} gap={"lg"}>
@@ -200,9 +199,6 @@ function ProfileDetails() {
                 form.setFieldValue("city", null);
               }}
             />
-            <Button mt={12} onClick={handleLogout}>
-              Logout
-            </Button>
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }}>
             <Select
@@ -218,6 +214,9 @@ function ProfileDetails() {
             />
           </Grid.Col>
         </Grid>
+        <Button mt={12} onClick={handleLogout}>
+          Logout
+        </Button>
       </Flex>
     </Flex>
   );

@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { useLayoutContext } from "../Layout.context.jsx";
 
 const HomePage = () => {
-  const { watchlist, isAddingToWatchlist } = useLayoutContext();
+  const { watchlist, isAddingToWatchlist, userDetails } = useLayoutContext();
 
   const navigate = useNavigate();
 
@@ -43,7 +43,9 @@ const HomePage = () => {
             <Grid.Col span={8}>
               <Text style={{ fontSize: "2rem" }}>
                 Nice to see you,{" "}
-                <span style={{ color: "#C3FFF8" }}>Atharva</span>
+                <span style={{ color: "#C3FFF8" }}>
+                  {userDetails.firstName}
+                </span>
               </Text>
             </Grid.Col>
             <Grid.Col

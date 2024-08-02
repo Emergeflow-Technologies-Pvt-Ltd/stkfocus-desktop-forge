@@ -7,6 +7,7 @@ import {
   ScrollArea,
   ActionIcon,
   Loader,
+  Popover,
 } from "@mantine/core";
 import {
   IconArrowUpRight,
@@ -14,7 +15,6 @@ import {
   IconArrowBackUp,
   IconArrowNarrowLeft,
   IconArrowNarrowRight,
-  IconPointFilled,
   IconPoint,
 } from "@tabler/icons-react";
 import { NEUTRALS, PRIMARY_COLORS } from "../../shared/colors.const.jsx";
@@ -85,7 +85,7 @@ const WidgetComponentContainer = () => {
     try {
       const response = await fetch("http://localhost:4000/api/get_nifty_data");
       const data = await response.json();
-      setNiftyData(data);
+      setNiftyData(data.niftyData);
     } catch (e) {
       console.error(e);
     }
@@ -103,6 +103,12 @@ const WidgetComponentContainer = () => {
     fetchData();
     fetchNiftyData();
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      fetchNiftyData();
+    }, 15000);
+  }, [niftyData]);
 
   const goBack = () => {
     navigate("/home");
@@ -145,7 +151,22 @@ const WidgetComponentContainer = () => {
           >
             <IconArrowBackUp />
           </ActionIcon>
-          <HelpIcon />
+          <Popover position="bottom" withArrow shadow="md">
+            <Popover.Target>
+              <ActionIcon
+                className="no-drag"
+                variant="transparent"
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <HelpIcon />
+              </ActionIcon>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <Text size="xs">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              </Text>
+            </Popover.Dropdown>
+          </Popover>
         </Flex>
         <Flex align={"center"}>
           <ActionIcon

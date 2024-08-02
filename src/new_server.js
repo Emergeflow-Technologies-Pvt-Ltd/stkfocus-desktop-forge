@@ -37,4 +37,16 @@ app.get("/api/get_data", async (req, res) => {
   });
 });
 
+app.get("/api/get_nifty_data", async (req, res) => {
+  const response = await nseIndia
+    .getData("https://www.nseindia.com/api/marketStatus")
+    .then((details) => {
+      return details;
+    });
+
+  res.json({
+    niftyData: response["marketState"][0],
+  });
+});
+
 export default app;

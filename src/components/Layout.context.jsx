@@ -15,19 +15,70 @@ const LayoutContext = createContext({
 export const LayoutProvider = ({ children }) => {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   const [watchlist, setWatchlist] = useState([]);
+  const [isLoadingWatchlist, setIsLoadingWatchlist] = useState(false);
   const [isAddingToWatchlist, setIsAddingToWatchlist] = useState(false);
   const [appUserId, setAppUserId] = useState();
+  const [userDetails, setUserDetails] = useState({});
   // const userId = "aaaaa";
 
+  const fetchUserDetails = async (userId) => {
+    try {
+      const record = await pb
+        .collection("users")
+        .getFirstListItem(`appUserId="${userId}"`);
+      console.log(record);
+      setUserDetails(record);
+    } catch {
+      showNotification({
+        title: "Error",
+        message: `Some error occurred while fetching user details`,
+        color: "red",
+        icon: <IconX size={16} />,
+      });
+    }
+  };
+
   const fetchWatchlistData = async () => {
+    setIsLoadingWatchlist(true);
+
     try {
       const record = await pb
         .collection("watchlist")
         .getFirstListItem(`appUserId="${appUserId}"`);
-      setWatchlist(record.watchlistItems || []);
+
+      console.log(record.watchlistItems);
+
+      const allWatchlistItems = await Promise.all(
+        record.watchlistItems.map(async (symbol) => {
+          const stockData = await fetchStockData(symbol);
+          console.log(stockData);
+          return {
+            companyName: stockData.companyName,
+            symbol: stockData.symbol,
+            industry: stockData.industry,
+            pChange: stockData.pChange,
+            price: stockData.lastPrice,
+            maxPrice: stockData.maxPrice,
+            minPrice: stockData.minPrice,
+          };
+        })
+      );
+
+      console.log({ allWatchlistItems });
+
+      setWatchlist(allWatchlistItems);
+
+      setIsLoadingWatchlist(false);
     } catch (error) {
       console.error("Failed to fetch watchlist data:", error);
       setWatchlist([]);
+      setIsLoadingWatchlist(false);
+      showNotification({
+        title: "Error",
+        message: "Could not fetch watchlist data! Pls try again!",
+        color: "red",
+        icon: <IconX size={16} />,
+      });
     }
   };
 
@@ -105,11 +156,11 @@ export const LayoutProvider = ({ children }) => {
   };
 
   // Function to update PocketBase watchlist
-  const updatePocketBaseWatchlist = async (newWatchlist) => {
+  const updatePocketBaseWatchlist = async (symbolsList) => {
     try {
       const data = {
         appUserId: appUserId,
-        watchlistItems: newWatchlist,
+        watchlistItems: symbolsList,
       };
 
       const existingRecord = await pb
@@ -182,7 +233,10 @@ export const LayoutProvider = ({ children }) => {
             : item
         );
         setWatchlist(updatedWatchlist);
-        updatePocketBaseWatchlist(updatedWatchlist); // Update PocketBase only when adding to watchlist
+
+        const symbolsList = updatedWatchlist.map((item) => item.symbol);
+
+        updatePocketBaseWatchlist(symbolsList); // Update PocketBase only when adding to watchlist
         showNotification({
           title: "Stock Added",
           message: `${stock.Symbol} has been added to your watchlist`,
@@ -228,7 +282,8 @@ export const LayoutProvider = ({ children }) => {
   const removeFromWatchlist = (symbol) => {
     const updatedWatchlist = watchlist.filter((item) => item.symbol !== symbol);
     setWatchlist(updatedWatchlist);
-    updatePocketBaseWatchlist(updatedWatchlist); // Update PocketBase when removing from watchlist
+    const symbolsList = updatedWatchlist.map((item) => item.symbol);
+    updatePocketBaseWatchlist(symbolsList); // Update PocketBase when removing from watchlist
     showNotification({
       title: "Stock Removed",
       message: `${symbol} has been removed from your watchlist`,
@@ -264,6 +319,7 @@ export const LayoutProvider = ({ children }) => {
   useEffect(() => {
     if (appUserId) {
       console.log("Fetch Watchlist Data");
+      fetchUserDetails(appUserId);
       fetchWatchlistData();
     }
   }, [appUserId]);
@@ -274,6 +330,7 @@ export const LayoutProvider = ({ children }) => {
         isUserLoggedIn,
         setIsUserLoggedIn,
         watchlist,
+        isLoadingWatchlist,
         addToWatchlist,
         updateWatchlistItem,
         isAddingToWatchlist,
@@ -281,6 +338,8 @@ export const LayoutProvider = ({ children }) => {
         fetchStockData,
         appUserId,
         setAppUserId,
+        userDetails,
+        fetchUserDetails,
       }}
     >
       {children}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, UnstyledButton, Text, Container } from "@mantine/core";
+import { Flex, Text, Container, ActionIcon, Popover } from "@mantine/core";
 import Logo from "../../assets/logo.svg";
 import HelpIcon from "../../assets/helpLogo.svg";
 import SettingIcon from "../../assets/settingIcon.svg";
@@ -33,16 +33,31 @@ export default function NavBar() {
           gap="md"
           wrap="wrap"
         >
-          <UnstyledButton style={{ display: "flex", alignItems: "center" }}>
-            <HelpIcon />
-          </UnstyledButton>
-          <UnstyledButton style={{ display: "flex", alignItems: "center" }}>
+          <Popover position="bottom" withArrow shadow="md">
+            <Popover.Target>
+              <ActionIcon
+                variant="transparent"
+                style={{ display: "flex", alignItems: "center" }}
+              >
+                <HelpIcon />
+              </ActionIcon>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <Text size="xs">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              </Text>
+            </Popover.Dropdown>
+          </Popover>
+          <ActionIcon
+            variant="transparent"
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <SettingIcon
               onClick={() => {
                 navigate("/settings");
               }}
             />
-          </UnstyledButton>
+          </ActionIcon>
         </Flex>
       </Flex>
     </Container>
