@@ -76,6 +76,7 @@ const StockWidget = ({ item }) => {
 
 const WidgetComponentContainer = () => {
   const navigate = useNavigate();
+  const { widgetStocks, appVersion } = useWidgetContext();
   const { watchlist } = useLayoutContext();
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -162,6 +163,7 @@ const WidgetComponentContainer = () => {
               </ActionIcon>
             </Popover.Target>
             <Popover.Dropdown>
+              <Text size="xs">App Version: {appVersion}</Text>
               <Text size="xs">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
               </Text>

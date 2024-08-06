@@ -2,7 +2,6 @@ import React from "react";
 import {
   Paper,
   Group,
-  Stack,
   Text,
   TextInput,
   Loader,
@@ -14,6 +13,7 @@ import { IconPlus } from "@tabler/icons-react";
 import { useHomePageContext } from "./HomePage.context.jsx";
 import { NEUTRALS } from "../../shared/colors.const.jsx";
 import { useLayoutContext } from "../Layout.context.jsx";
+
 export default function SearchBox() {
   const { searchResults, searchTerm, setSearchTerm, isLoading, searchError } =
     useHomePageContext();
@@ -25,32 +25,47 @@ export default function SearchBox() {
   };
 
   return (
-    <Flex direction={"column"} rowGap={5}>
-      <Text size="lg" weight={500} mb={5}>
+    <Flex direction="column" style={{ height: "100%" }}>
+      <Text size="lg" weight={500} mb="xs">
         Search for stocks
       </Text>
       <TextInput
         placeholder="Search stocks..."
         value={searchTerm}
         onChange={handleSearch}
+        mb="xs"
       />
       {isLoading ? (
-        <Loader />
+        <Flex justify="center" align="center" style={{ flex: 1 }}>
+          <Loader />
+        </Flex>
       ) : (
-        <ScrollArea type="scroll" style={{ flex: 1, maxHeight: "500px" }}>
-          <Flex direction={"column"} rowGap={5}>
-            <Text c={"#ff0004"}>{searchError}</Text>
+        <ScrollArea style={{ flex: 1, maxHeight: "calc(100% - 80px)" }}>
+          <Flex direction="column" gap="xs">
+            {searchError && (
+              <Text c="#ff0004" mb="xs">
+                {searchError}
+              </Text>
+            )}
             {searchResults.map((stock, index) => (
-              <Paper bg={NEUTRALS[1100]} key={index} withBorder p="md" mt="xs">
-                <Group spacing="xs" position="apart" style={{ width: "100%" }}>
-                  <div style={{ flexGrow: 1 }}>
-                    <Text>{stock["Company Name"]}</Text>
-                    <Text color="dimmed">{stock.Symbol}</Text>
-                  </div>
+              <Paper
+                bg={NEUTRALS[1100]}
+                key={index}
+                withBorder
+                p="md"
+                style={{ width: "100%" }}
+              >
+                <Group position="apart" noWrap style={{ width: "100%" }}>
+                  <Flex direction="column" style={{ minWidth: 0, flex: 1 }}>
+                    <Text truncate>{stock["Company Name"]}</Text>
+                    <Text color="dimmed" size="sm" truncate>
+                      {stock.Symbol}
+                    </Text>
+                  </Flex>
                   <ActionIcon
                     variant="outline"
                     color="rgba(255, 255, 255, 1)"
-                    size="xs"
+                    size="sm"
                     radius="xl"
                     onClick={() => addToWatchlist(stock)}
                   >

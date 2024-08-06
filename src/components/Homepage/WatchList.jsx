@@ -21,7 +21,6 @@ import { useLayoutContext } from "../Layout.context.jsx";
 
 export default function WatchList({ watchlist }) {
   const { error } = useHomePageContext();
-
   const { removeFromWatchlist, isLoadingWatchlist } = useLayoutContext();
 
   return (
@@ -29,8 +28,7 @@ export default function WatchList({ watchlist }) {
       bg={NEUTRALS[1100]}
       withBorder
       py="sm"
-      pl="sm"
-      pr="xs"
+      px="sm"
       mt="sm"
       style={{
         flex: 1,
@@ -38,104 +36,112 @@ export default function WatchList({ watchlist }) {
         flexDirection: "column",
       }}
     >
-      <Flex direction={"column"} rowGap={16} gap="xs">
+      <Flex direction="column" gap="xs">
         <Title order={1} style={{ fontSize: "1.5rem" }}>
           Watchlist
         </Title>
-
         <Text>List of stocks which will be shown in widget</Text>
-        <Text c={"#ff0004"}>{error}</Text>
+        <Text c="#ff0004">{error}</Text>
+      </Flex>
 
-        <ScrollArea
-          type="scroll"
-          style={{
-            flex: 1,
-            maxHeight: "500px",
-          }}
-        >
-          {isLoadingWatchlist ? (
-            <center>
-              <Loader />
-            </center>
-          ) : (
-            <Flex direction={"column"} rowGap={12}>
-              {watchlist.map((item) => {
-                const pChange = parseFloat(item.pChange).toFixed(2);
-                const isChangePositive = pChange > 0;
+      <ScrollArea
+        type="scroll"
+        style={{
+          flex: 1,
+          maxHeight: "500px",
+          marginTop: "1rem",
+        }}
+      >
+        {isLoadingWatchlist ? (
+          <Flex justify="center" align="center" style={{ height: "100%" }}>
+            <Loader />
+          </Flex>
+        ) : (
+          <Flex direction="column" gap="md">
+            {watchlist.map((item) => {
+              const pChange = parseFloat(item.pChange).toFixed(2);
+              const isChangePositive = pChange > 0;
 
-                return (
+              return (
+                <Flex
+                  key={item.symbol}
+                  align="center"
+                  gap="xs"
+                  style={{ width: "100%" }}
+                >
                   <Flex
-                    key={item.symbol}
+                    shadow="md"
+                    bg={NEUTRALS[1100]}
+                    p="md"
+                    gap="sm"
                     align="center"
-                    gap="xs"
-                    style={{ width: "100%" }}
+                    style={{
+                      border: `1px solid ${NEUTRALS[900]}`,
+                      borderRadius: "4px",
+                      flex: 1,
+                      minWidth: 0,
+                    }}
                   >
+                    <Flex direction="column" style={{ flex: 1, minWidth: 0 }}>
+                      <Text fw={600} truncate>
+                        {item.companyName}
+                      </Text>
+                      <Text c={NEUTRALS[600]} size="sm" truncate>
+                        {item.symbol} • {item.industry}
+                      </Text>
+                    </Flex>
                     <Flex
-                      shadow="md"
-                      bg={NEUTRALS[1100]}
-                      p="md"
-                      gap="sm"
-                      align="center"
-                      style={{
-                        flex: 1,
-                        border: `1px solid ${NEUTRALS[900]}`,
-                        borderRadius: "4px",
-                      }}
+                      direction="column"
+                      style={{ minWidth: "fit-content" }}
                     >
-                      <Flex direction="column" style={{ flex: 1 }}>
-                        <Text fw={600}>{item.companyName}</Text>
-                        <Text c={NEUTRALS[600]} size="sm">
-                          {item.symbol} • {item.industry}
+                      <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
+                        HIGH: ₹{item.maxPrice}
+                      </Text>
+                      <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
+                        LOW: ₹{item.minPrice}
+                      </Text>
+                    </Flex>
+                    <Divider size="sm" orientation="vertical" />
+                    <Flex
+                      direction="column"
+                      align="flex-end"
+                      style={{ minWidth: "fit-content" }}
+                    >
+                      <Text fw={900} size="md" ta="right">
+                        ₹{item.price}
+                      </Text>
+                      <Flex align="center">
+                        {isChangePositive ? (
+                          <IconArrowUpRight color="green" />
+                        ) : (
+                          <IconArrowDownRight color="red" />
+                        )}
+                        <Text
+                          fw={500}
+                          size="sm"
+                          color={isChangePositive ? "green" : "red"}
+                          ta="right"
+                        >
+                          {pChange}%
                         </Text>
-                      </Flex>
-                      <Flex direction="column">
-                        <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
-                          HIGH: ₹{item.maxPrice}
-                        </Text>
-                        <Text fw={500} size="xs" ta="right" c={NEUTRALS[500]}>
-                          LOW: ₹{item.minPrice}
-                        </Text>
-                      </Flex>
-                      <Divider size="sm" orientation="vertical" />
-                      <Flex direction="column" align="flex-end">
-                        <Text fw={900} size="xl" ta="right">
-                          ₹{item.price}
-                        </Text>
-                        <Flex align="center">
-                          {isChangePositive ? (
-                            <IconArrowUpRight color="green" />
-                          ) : (
-                            <IconArrowDownRight color="red" />
-                          )}
-                          <Text
-                            fw={500}
-                            color={isChangePositive ? "green" : "red"}
-                            ta="right"
-                          >
-                            {pChange}%
-                          </Text>
-                        </Flex>
                       </Flex>
                     </Flex>
-                    <ActionIcon
-                      variant="outline"
-                      color="#e50606"
-                      size="sm"
-                      radius="xl"
-                      onClick={() => removeFromWatchlist(item.symbol)}
-                      style={{
-                        marginLeft: "8px",
-                      }}
-                    >
-                      <IconMinus size={14} />
-                    </ActionIcon>
                   </Flex>
-                );
-              })}
-            </Flex>
-          )}
-        </ScrollArea>
-      </Flex>
+                  <ActionIcon
+                    variant="outline"
+                    color="#e50606"
+                    size="sm"
+                    radius="xl"
+                    onClick={() => removeFromWatchlist(item.symbol)}
+                  >
+                    <IconMinus size={14} />
+                  </ActionIcon>
+                </Flex>
+              );
+            })}
+          </Flex>
+        )}
+      </ScrollArea>
     </Paper>
   );
 }

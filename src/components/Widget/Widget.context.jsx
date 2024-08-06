@@ -6,6 +6,7 @@ const WidgetContext = createContext();
 export const WidgetContextProvider = ({ children }) => {
   const { fetchStockData } = useLayoutContext();
   const [widgetStocks, setWidgetStocks] = useState([]);
+  const [appVersion, setAppVersion] = useState("");
 
   const updateWidgetStocks = async () => {
     try {
@@ -22,7 +23,20 @@ export const WidgetContextProvider = ({ children }) => {
     }
   };
 
+  const fetchAppVersion = async () => {
+    try {
+      const version = await window.electronAPI.getAppVersion();
+      setAppVersion(version);
+    } catch (error) {
+      console.error("Failed to fetch app version:", error);
+      setAppVersion("Unknown");
+    }
+  };
+
   useEffect(() => {
+    // Fetch app version when the component mounts
+    fetchAppVersion();
+
     // Set up interval for updates every 15 seconds
     const intervalId = setInterval(updateWidgetStocks, 15000);
 
@@ -31,7 +45,7 @@ export const WidgetContextProvider = ({ children }) => {
   }, [widgetStocks, fetchStockData]);
 
   return (
-    <WidgetContext.Provider value={{ widgetStocks }}>
+    <WidgetContext.Provider value={{ widgetStocks, appVersion }}>
       {children}
     </WidgetContext.Provider>
   );

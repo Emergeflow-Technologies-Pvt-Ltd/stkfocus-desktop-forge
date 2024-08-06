@@ -35,7 +35,8 @@ const HomePage = () => {
           color: "white",
           padding: "20px",
           backgroundColor: NEUTRALS[1100],
-          height: "100vh",
+          height: "100%",
+          overflow: "hidden",
         }}
       >
         <Container fluid style={{ maxWidth: "1100px" }}>
@@ -66,8 +67,8 @@ const HomePage = () => {
               </Button>
             </Grid.Col>
           </Grid>
-          <Grid>
-            <Flex gap="md" style={{ width: "100%", height: "100%" }}>
+          <Grid style={{ flex: 1 }}>
+            <Flex gap="md" style={{ width: "100%", height: "80vh" }}>
               <Paper
                 withBorder
                 p="md"

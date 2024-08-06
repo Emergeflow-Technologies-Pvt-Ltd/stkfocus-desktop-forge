@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   ipcRenderer: ipcRenderer,
   launchWidget: () => ipcRenderer.send("create-widget-window"),
   createMainWindow: () => ipcRenderer.send("create-main-window"),
+  getAppVersion: () => ipcRenderer.invoke("get-app-version"),
   getWatchlist: (userId) => {
     return new Promise((resolve) => {
       ipcRenderer.once("get-watchlist-response", (_, result) =>

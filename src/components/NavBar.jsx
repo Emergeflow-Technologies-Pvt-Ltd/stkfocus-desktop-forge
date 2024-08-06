@@ -1,12 +1,36 @@
-import React from "react";
-import { Flex, Text, Container, ActionIcon, Popover } from "@mantine/core";
+import React, { useState, useEffect } from "react";
+import {
+  Flex,
+  UnstyledButton,
+  Text,
+  Container,
+  Button,
+  Popover,
+} from "@mantine/core";
 import Logo from "../../assets/logo.svg";
 import HelpIcon from "../../assets/helpLogo.svg";
 import SettingIcon from "../../assets/settingIcon.svg";
 import { NEUTRALS } from "../shared/colors.const.jsx";
 import { useNavigate } from "react-router-dom";
+
 export default function NavBar() {
   const navigate = useNavigate();
+  const [appVersion, setAppVersion] = useState("");
+
+  useEffect(() => {
+    const fetchAppVersion = async () => {
+      try {
+        const version = await window.electronAPI.getAppVersion();
+        setAppVersion(version);
+      } catch (error) {
+        console.error("Failed to fetch app version:", error);
+        setAppVersion("Unknown");
+      }
+    };
+
+    fetchAppVersion();
+  }, []);
+
   return (
     <Container fluid bg={NEUTRALS[900]}>
       <Flex
@@ -35,29 +59,24 @@ export default function NavBar() {
         >
           <Popover position="bottom" withArrow shadow="md">
             <Popover.Target>
-              <ActionIcon
-                variant="transparent"
-                style={{ display: "flex", alignItems: "center" }}
-              >
+              <UnstyledButton style={{ display: "flex", alignItems: "center" }}>
                 <HelpIcon />
-              </ActionIcon>
+              </UnstyledButton>
             </Popover.Target>
             <Popover.Dropdown>
+              <Text size="xs">App Version: {appVersion}</Text>
               <Text size="xs">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
               </Text>
             </Popover.Dropdown>
           </Popover>
-          <ActionIcon
-            variant="transparent"
-            style={{ display: "flex", alignItems: "center" }}
-          >
+          <UnstyledButton style={{ display: "flex", alignItems: "center" }}>
             <SettingIcon
               onClick={() => {
                 navigate("/settings");
               }}
             />
-          </ActionIcon>
+          </UnstyledButton>
         </Flex>
       </Flex>
     </Container>

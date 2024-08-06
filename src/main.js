@@ -1,4 +1,11 @@
-const { app, BrowserWindow, session, ipcMain, screen } = require("electron");
+const {
+  app,
+  BrowserWindow,
+  session,
+  ipcMain,
+  screen,
+  Menu,
+} = require("electron");
 const { updateElectronApp, UpdateSourceType } = require("update-electron-app");
 const log = require("electron-log");
 // Check for updates as soon as the app is ready
@@ -79,6 +86,56 @@ const createWidgetWindow = () => {
     widgetWindow.webContents.send("receive-watchlist", watchlist);
   });
 };
+const createMenu = () => {
+  const menuTemplate = [
+    {
+      label: "Stkfocus",
+      submenu: [
+        {
+          label: "Check for Updates",
+          click: () => {
+            log.info("Manual update check triggered.");
+            ipcMain.emit("check-for-updates");
+          },
+        },
+        { type: "separator" },
+        { role: "quit" },
+      ],
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { role: "undo" },
+        { role: "redo" },
+        { type: "separator" },
+        { role: "cut" },
+        { role: "copy" },
+        { role: "paste" },
+      ],
+    },
+    {
+      label: "View",
+      submenu: [
+        { role: "reload" },
+        { role: "forcereload" },
+        { role: "toggledevtools" },
+        { type: "separator" },
+        { role: "resetzoom" },
+        { role: "zoomin" },
+        { role: "zoomout" },
+        { type: "separator" },
+        { role: "togglefullscreen" },
+      ],
+    },
+    {
+      role: "window",
+      submenu: [{ role: "minimize" }, { role: "close" }],
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+};
 
 app.whenReady().then(() => {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
@@ -93,7 +150,7 @@ app.whenReady().then(() => {
   // spawn("node", ["./server/server.js"]);
 
   createWindow();
-
+  createMenu();
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -136,6 +193,20 @@ ipcMain.on("create-main-window", () => {
   createWindow();
 });
 
+ipcMain.handle("get-app-version", () => {
+  return app.getVersion();
+});
+ipcMain.on("check-for-updates", () => {
+  log.info("Manual update check triggered.");
+  updateElectronApp({
+    updateSource: {
+      host: "https://update.electronjs.org",
+      type: UpdateSourceType.ElectronPublicUpdateService,
+      repo: "Emergeflow-Technologies-Pvt-Ltd/stkfocus-desktop-forge",
+    },
+    logger: log,
+  });
+});
 // // Auto-update event handlers
 // autoUpdater.on("update-available", () => {
 //   log.info("Update available.");

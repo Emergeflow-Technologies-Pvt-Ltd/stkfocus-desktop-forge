@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 body {
-  background-color: 100;
+  background-color: #161a1d;
 }
 .draggable {
   -webkit-app-region: drag;
