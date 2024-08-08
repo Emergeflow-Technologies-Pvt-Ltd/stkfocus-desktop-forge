@@ -32,7 +32,6 @@ function ProfileDetails() {
       firstName: isNotEmpty("First Name is required"),
       lastName: isNotEmpty("Last Name is required"),
       email: (value) =>
-        // eslint-disable-next-line no-nested-ternary
         value.length === 0
           ? "Email is required"
           : !emailRegex.test(value)
@@ -61,12 +60,15 @@ function ProfileDetails() {
 
   const editDetails = async (userId) => {
     try {
-      const record = await pb.collection("users").update(userId, form.values);
+      // eslint-disable-next-line no-unused-vars
+      const record = await pb
+        .collection("userslist")
+        .update(userId, form.values);
       notifications.show({
         title: "Succesfully Updated",
         color: "green",
       });
-      fetchUserDetails(appUserId);
+      fetchUserDetails(userId);
     } catch {
       notifications.show({
         title: "Some error occurred while updating data",
@@ -91,7 +93,7 @@ function ProfileDetails() {
       gap={"1rem"}
       component="form"
       onSubmit={form.onSubmit(() => {
-        editDetails(userDetails.id);
+        editDetails(appUserId);
       })}
     >
       <Flex align={"center"} gap={"lg"}>

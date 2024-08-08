@@ -6,14 +6,13 @@ import BackIcon from "../../../assets/back-icon.svg";
 import { NEUTRALS } from "../../shared/colors.const.jsx";
 import ProfileDetails from "./ProfileDetails/ProfileDetails.jsx";
 import OtherSettings from "./OtherSettings/OtherSettings.jsx";
-import { auth } from "../../firebase.config.js";
-import { signOut } from "firebase/auth";
 import { IconLogout } from "@tabler/icons-react";
 import { useLayoutContext } from "../Layout.context.jsx";
+import pb from "../../shared/pocketbase.js";
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { userDetails } = useLayoutContext();
+  const { userDetails, setIsUserLoggedIn, setAppUserId } = useLayoutContext();
 
   const TABS = {
     PROFILE_DETAILS: "Profile Details",
@@ -25,8 +24,10 @@ export default function Settings() {
   };
 
   const handleLogout = () => {
+    pb.authStore.clear();
+    setIsUserLoggedIn(false);
+    setAppUserId(null);
     navigate("/");
-    signOut(auth);
   };
 
   return (

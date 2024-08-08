@@ -1,6 +1,13 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from "react";
-import { Button, Flex, Grid, Paper, Select, TextInput } from "@mantine/core";
+import {
+  Button,
+  Flex,
+  Grid,
+  Paper,
+  Select,
+  TextInput,
+  Text,
+} from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -11,14 +18,12 @@ import {
   STATE_WISE_CITIES,
 } from "../../shared/constants/general.const.js";
 import pb from "../../shared/pocketbase.js";
-import { useLayoutContext } from "../Layout.context.jsx";
 import { useNavigate } from "react-router-dom";
 
 function SignUp() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const STATES = Object.keys(STATE_WISE_CITIES);
 
-  const { appUserId } = useLayoutContext();
   const navigate = useNavigate();
 
   const form = useForm({
@@ -26,17 +31,18 @@ function SignUp() {
       firstName: "",
       lastName: "",
       email: "",
+      emailVisibility: true,
       dateOfBirth: null,
       gender: null,
       state: null,
       city: null,
-      appUserId: "",
+      password: "12345678",
+      passwordConfirm: "12345678",
     },
     validate: {
       firstName: isNotEmpty("First Name is required"),
       lastName: isNotEmpty("Last Name is required"),
       email: (value) =>
-        // eslint-disable-next-line no-nested-ternary
         value.length === 0
           ? "Email is required"
           : !emailRegex.test(value)
@@ -50,23 +56,40 @@ function SignUp() {
   });
 
   const submitFormAction = async () => {
-    form.setFieldValue("appUserId");
     try {
-      const record = await pb.collection("users").create(form.values);
-      notifications.show({
-        title: "Succesfully Registered",
-        color: "green",
-      });
-    } catch {
-      notifications.show({
-        title: "Some error occurred while sending data",
-        color: "red",
-      });
+      const queryString = `email="${form.values.email}"`;
+      console.log(queryString);
+      const record = await pb
+        .collection("userslist")
+        .getFirstListItem(queryString);
+      if (record) {
+        notifications.show({
+          title: "Account aldready exists",
+          color: "yellow",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const record = await pb.collection("userslist").create(form.values);
+        notifications.show({
+          title: "Succesfully Registered",
+          color: "green",
+        });
+        navigate("/");
+      } catch (error) {
+        console.error(error);
+        notifications.show({
+          title: "Some error occurred while sending data",
+          color: "red",
+        });
+      }
     }
-    form.reset();
 
-    navigate("/");
+    form.reset();
   };
+
   return (
     <>
       <OnboardingNavbar />
@@ -98,14 +121,14 @@ function SignUp() {
             })}
           >
             <Grid w="100%" gutter="lg">
-              <Grid.Col span={{ base: 12, md: 6 }}>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   label="First Name"
                   placeholder="First Name"
                   {...form.getInputProps("firstName")}
                 />
               </Grid.Col>
-              <Grid.Col span={{ base: 12, md: 6 }}>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   label="Last Name"
                   placeholder="Last Name"
@@ -115,12 +138,12 @@ function SignUp() {
             </Grid>
             <TextInput
               w="100%"
-              label="Email"
+              label="Email (Please enter your google email address)"
               placeholder="eg.sample@gmail.com"
               {...form.getInputProps("email")}
             />
             <Grid w="100%" gutter="lg">
-              <Grid.Col span={{ base: 12, md: 6 }}>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <DatePickerInput
                   label="Date of Birth"
                   placeholder="DD/MM/YY"
@@ -128,7 +151,7 @@ function SignUp() {
                   {...form.getInputProps("dateOfBirth")}
                 />
               </Grid.Col>
-              <Grid.Col span={{ base: 12, md: 6 }}>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <Select
                   label="Gender"
                   placeholder="Select gender"
@@ -139,7 +162,7 @@ function SignUp() {
               </Grid.Col>
             </Grid>
             <Grid w="100%" gutter="lg">
-              <Grid.Col span={{ base: 12, md: 6 }}>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <Select
                   label="State"
                   placeholder="Select state"
@@ -155,7 +178,7 @@ function SignUp() {
                   }}
                 />
               </Grid.Col>
-              <Grid.Col span={{ base: 12, md: 6 }}>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <Select
                   label="City"
                   placeholder="Select city"
@@ -180,6 +203,20 @@ function SignUp() {
             >
               Create Account
             </Button>
+            <Text c="#8996A9">
+              Already have an account?{" "}
+              <span
+                style={{
+                  color: PRIMARY_COLORS.blue_main,
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Login
+              </span>
+            </Text>
           </Flex>
         </Paper>
       </Flex>

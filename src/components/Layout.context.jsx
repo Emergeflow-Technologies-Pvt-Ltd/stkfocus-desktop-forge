@@ -1,6 +1,4 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { auth } from "../firebase.config.js";
-import Papa from "papaparse";
 import { showNotification } from "@mantine/notifications";
 import { IconX, IconCheck } from "@tabler/icons-react";
 import pb from "../shared/pocketbase.js";
@@ -18,16 +16,14 @@ export const LayoutProvider = ({ children }) => {
   const [watchlist, setWatchlist] = useState([]);
   const [isLoadingWatchlist, setIsLoadingWatchlist] = useState(false);
   const [isAddingToWatchlist, setIsAddingToWatchlist] = useState(false);
-  const [appUserId, setAppUserId] = useState();
+  const [appUserId, setAppUserId] = useState(null);
   const [userDetails, setUserDetails] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   // const userId = "aaaaa";
 
   const fetchUserDetails = async (userId) => {
     try {
-      const record = await pb
-        .collection("users")
-        .getFirstListItem(`appUserId="${userId}"`);
+      const record = await pb.collection("userslist").getOne(userId);
       console.log(record);
       setUserDetails(record);
     } catch {
@@ -81,66 +77,6 @@ export const LayoutProvider = ({ children }) => {
         color: "red",
         icon: <IconX size={16} />,
       });
-    }
-  };
-
-  const processAPIResponse = async (data) => {
-    return {
-      symbol: data["info"]["symbol"],
-      companyName: data["info"]["companyName"],
-      industry: data["info"]["industry"],
-      lastPrice: data["priceInfo"]["lastPrice"],
-      change: data["priceInfo"]["change"],
-      pChange: data["priceInfo"]["pChange"],
-      maxPrice: data["priceInfo"]["intraDayHighLow"]["max"],
-      minPrice: data["priceInfo"]["intraDayHighLow"]["min"],
-    };
-  };
-
-  const fetchStockDataDirectlyFromNSE = async (symbol) => {
-    try {
-      // const response = await fetch(
-      //   `http://localhost:8000/api/get_data?symbol=${symbol}`
-      // );
-
-      const headers = new Headers({
-        // Connection: "keep-alive",
-        "Cache-Control": "max-age=0",
-        DNT: "1",
-        "Upgrade-Insecure-Requests": "1",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36",
-        "Sec-Fetch-User": "?1",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
-        "Sec-Fetch-Site": "none",
-        "Sec-Fetch-Mode": "navigate",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language": "en-US,en;q=0.9,hi;q=0.8",
-      });
-
-      let data = null;
-
-      const response = await fetch(
-        `https://nseindia.com/api/quote-equity?symbol=${symbol}`,
-        { method: "GET", headers: headers }
-      );
-
-      if (response.status !== 200) {
-        await fetch("https://nseindia.com", {
-          method: "GET",
-          headers: headers,
-        });
-        data = {};
-      } else {
-        data = await response.json();
-        data = processAPIResponse(data);
-      }
-
-      return data;
-    } catch (error) {
-      console.error(`Error fetching data for ${symbol}:`, error);
-      return null;
     }
   };
 
@@ -306,19 +242,15 @@ export const LayoutProvider = ({ children }) => {
     return () => clearInterval(intervalId); // Cleanup on unmount
   }, [watchlist]);
 
-  useEffect(() => {
-    setIsLoading(true);
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setIsUserLoggedIn(!!user);
-      setIsLoading(false);
-    });
+  useEffect(async () => {
+    setIsUserLoggedIn(pb.authStore.isValid);
 
-    if (auth.currentUser) {
-      setAppUserId(auth.currentUser.uid);
+    if (pb.authStore.isValid) {
+      setAppUserId(pb.authStore.model.id);
     }
 
-    return () => unsubscribe();
-  }, [auth.currentUser]);
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     if (appUserId) {

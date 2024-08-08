@@ -24,6 +24,7 @@ import Advertisement from "../../../assets/advertise.svg";
 import Logo from "../../../assets/logo.svg";
 import HelpIcon from "../../../assets/helpLogo.svg";
 import { useLayoutContext } from "../Layout.context.jsx";
+import moment from "moment";
 
 const StockWidget = ({ item }) => {
   const pChange = parseFloat(item.pChange).toFixed(2);
@@ -81,6 +82,8 @@ const WidgetComponentContainer = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [niftyData, setNiftyData] = useState({});
+
+  const now = moment();
 
   const fetchNiftyData = async () => {
     try {
@@ -238,6 +241,7 @@ const WidgetComponentContainer = () => {
                 }}
               >
                 <Flex direction="column" style={{ flex: 1 }}>
+                  <Text size="xs">{now.format("HH:mm:ss a")}</Text>
                   <Text fw={600} size="sm">
                     {niftyData.index}
                   </Text>
