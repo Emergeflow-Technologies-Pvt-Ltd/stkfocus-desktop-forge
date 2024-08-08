@@ -23,6 +23,7 @@ const HomePage = () => {
 
   const navigate = useNavigate();
 
+  //function to launch widget
   const handleLaunchWidget = () => {
     window.electronAPI.launchWidget();
   };

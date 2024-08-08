@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 
 function SignUp() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const STATES = Object.keys(STATE_WISE_CITIES);
+  const STATES = Object.keys(STATE_WISE_CITIES); // list of distinct states
 
   const navigate = useNavigate();
 
@@ -55,8 +55,10 @@ function SignUp() {
     },
   });
 
+  //function to register a new user
   const submitFormAction = async () => {
     try {
+      //checking whether the record for the user already exists in database
       const queryString = `email="${form.values.email}"`;
       console.log(queryString);
       const record = await pb
@@ -70,6 +72,8 @@ function SignUp() {
       }
     } catch (error) {
       console.error(error);
+
+      //if record doesn't exist then register the user
       try {
         // eslint-disable-next-line no-unused-vars
         const record = await pb.collection("userslist").create(form.values);
@@ -77,7 +81,7 @@ function SignUp() {
           title: "Succesfully Registered",
           color: "green",
         });
-        navigate("/");
+        navigate("/"); //navigate the user to login screen after successful regsistration
       } catch (error) {
         console.error(error);
         notifications.show({

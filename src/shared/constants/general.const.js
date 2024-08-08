@@ -1,5 +1,3 @@
-// export const POCKETBASE_URL = "http://37.27.197.220";
-//export const POCKETBASE_URL = "http://127.0.0.1:8090";
 
 export const POCKETBASE_URL = "https://admin.stkfocus.in";
 

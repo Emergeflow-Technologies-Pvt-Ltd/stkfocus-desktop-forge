@@ -21,6 +21,7 @@ export const LayoutProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   // const userId = "aaaaa";
 
+  //function to fetch user details and saving it in global context
   const fetchUserDetails = async (userId) => {
     try {
       const record = await pb.collection("userslist").getOne(userId);
@@ -36,6 +37,7 @@ export const LayoutProvider = ({ children }) => {
     }
   };
 
+  //function to fetch watchlist data for a particular user and saving it in global context
   const fetchWatchlistData = async () => {
     setIsLoadingWatchlist(true);
 
@@ -243,8 +245,9 @@ export const LayoutProvider = ({ children }) => {
   }, [watchlist]);
 
   useEffect(async () => {
-    setIsUserLoggedIn(pb.authStore.isValid);
+    setIsUserLoggedIn(pb.authStore.isValid); //assigning a boolean value which indicates whether user is logged in or not.
 
+    // if user is logged in, then save the id of the user in global context
     if (pb.authStore.isValid) {
       setAppUserId(pb.authStore.model.id);
     }
@@ -253,6 +256,7 @@ export const LayoutProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    // if user is logged in, then fetch user details and watchlist data for that user
     if (appUserId) {
       console.log("Fetch Watchlist Data");
       fetchUserDetails(appUserId);

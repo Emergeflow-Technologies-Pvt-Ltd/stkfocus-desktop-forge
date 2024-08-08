@@ -13,7 +13,7 @@ import moment from "moment";
 import { useLayoutContext } from "../../Layout.context.jsx";
 function ProfileDetails() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const STATES = Object.keys(STATE_WISE_CITIES);
+  const STATES = Object.keys(STATE_WISE_CITIES); // list of distinct states
   const [isEditing, setIsEditing] = useState(false);
 
   const { appUserId, userDetails, fetchUserDetails } = useLayoutContext();
@@ -44,6 +44,7 @@ function ProfileDetails() {
     },
   });
 
+  // function to initialize form data with user's original values
   const initializeWithOrginalData = (user) => {
     const { firstName, lastName, email, dateOfBirth, gender, state, city } =
       user;
@@ -58,6 +59,7 @@ function ProfileDetails() {
     });
   };
 
+  //function to edit details of user
   const editDetails = async (userId) => {
     try {
       // eslint-disable-next-line no-unused-vars
@@ -80,7 +82,7 @@ function ProfileDetails() {
 
   const cancelEditing = () => {
     setIsEditing(false);
-    initializeWithOrginalData(userDetails);
+    initializeWithOrginalData(userDetails); //re-assign form data with user's original values
   };
 
   useEffect(() => {

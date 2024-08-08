@@ -13,27 +13,8 @@ function LoginPage() {
 
   const { setIsUserLoggedIn, setAppUserId } = useLayoutContext();
 
+  //function to authenticate user using pocketbase oauth2
   const onSignInWithGoogle = async () => {
-    // const authData = await pb
-    //   .collection("userslist")
-    //   .authWithOAuth2({ provider: "google" });
-
-    // console.log(authData);
-
-    // console.log(pb.authStore.isValid);
-    // console.log(pb.authStore.token);
-    // console.log(pb.authStore.model.id);
-
-    // setIsUserLoggedIn(pb.authStore.isValid);
-    // setAppUserId(pb.authStore.model.id);
-
-    // notifications.show({
-    //   title: "Successfully Logined!",
-    //   color: "green",
-    // });
-
-    // navigate("/");
-
     try {
       const authData = await pb
         .collection("userslist")
@@ -44,15 +25,15 @@ function LoginPage() {
       console.log(pb.authStore.token);
       console.log(pb.authStore.model.id);
 
-      setIsUserLoggedIn(pb.authStore.isValid);
-      setAppUserId(pb.authStore.model.id);
+      setIsUserLoggedIn(pb.authStore.isValid); //assigning a boolean value which indicates whether user is logged in or not.
+      setAppUserId(pb.authStore.model.id); // saving id of the user in global context
 
       notifications.show({
         title: "Successfully Logined!",
         color: "green",
       });
 
-      navigate("/");
+      navigate("/"); //navigate the user to home screen after successful login
     } catch (e) {
       console.error(e);
       notifications.show({
@@ -103,16 +84,6 @@ function LoginPage() {
             <Button onClick={onSignInWithGoogle} leftSection={<GoogleIcon />}>
               Sign In with Google
             </Button>
-            {/* <Button
-                mt="md"
-                bg={PRIMARY_COLORS["blue_main"]}
-                onClick={handleLaunchWidget}
-                styles={{
-                  label: { color: "black" },
-                }}
-              >
-                Launch Widget
-              </Button> */}
             <Text c="#8996A9">
               New user ?{" "}
               <span
