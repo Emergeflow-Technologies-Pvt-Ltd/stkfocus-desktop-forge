@@ -86,6 +86,8 @@ const createWidgetWindow = () => {
     widgetWindow.webContents.send("receive-watchlist", watchlist);
   });
 };
+
+//window taskbar menu
 const createMenu = () => {
   const menuTemplate = [
     {

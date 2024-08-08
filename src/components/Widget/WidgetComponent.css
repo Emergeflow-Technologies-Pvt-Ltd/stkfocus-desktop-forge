@@ -1,8 +1,5 @@
 .carousel-container {
-  width: 100%;
-  height: 100%;
   perspective: 1000px;
-  overflow: hidden;
 }
 
 .carousel-inner {
@@ -10,22 +7,47 @@
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  transition: transform 6s ease-in-out;
 }
 
 .carousel-page {
+  position: absolute;
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
   backface-visibility: hidden;
 }
 
-.carousel-page:nth-child(1) {
-  transform: rotateY(0deg) translateZ(100%);
+.carousel-next-enter {
+  transform: rotateY(180deg);
 }
 
-.carousel-page:nth-child(2) {
-  transform: rotateY(90deg) translateZ(100%);
+.carousel-next-enter-active {
+  transform: rotateY(0deg);
+  transition: transform 500ms;
+}
+
+.carousel-next-exit {
+  transform: rotateY(0deg);
+}
+
+.carousel-next-exit-active {
+  transform: rotateY(-180deg);
+  transition: transform 500ms;
+}
+
+.carousel-prev-enter {
+  transform: rotateY(-180deg);
+}
+
+.carousel-prev-enter-active {
+  transform: rotateY(0deg);
+  transition: transform 500ms;
+}
+
+.carousel-prev-exit {
+  transform: rotateY(0deg);
+}
+
+.carousel-prev-exit-active {
+  transform: rotateY(180deg);
+  transition: transform 500ms;
 }
