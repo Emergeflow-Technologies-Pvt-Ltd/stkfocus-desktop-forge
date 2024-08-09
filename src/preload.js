@@ -22,4 +22,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
       ipcRenderer.send("update-watchlist", userId, watchlistItems);
     });
   },
+  getAlwaysOnTop: () => ipcRenderer.invoke("get-always-on-top"),
+  setAlwaysOnTop: (value) => ipcRenderer.invoke("set-always-on-top", value),
 });

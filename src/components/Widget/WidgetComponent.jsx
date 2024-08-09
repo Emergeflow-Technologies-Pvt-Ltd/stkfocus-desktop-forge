@@ -20,7 +20,7 @@ import {
 import { NEUTRALS, PRIMARY_COLORS } from "../../shared/colors.const.jsx";
 import { WidgetContextProvider, useWidgetContext } from "./Widget.context.jsx";
 import { useLayoutContext } from "../Layout.context.jsx";
-import { CSSTransition, TransitionGroup } from "react-transition-group"; //for transition effect
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 import Advertisement from "../../../assets/advertise.svg";
 import Logo from "../../../assets/logo.svg";
@@ -28,7 +28,7 @@ import HelpIcon from "../../../assets/helpLogo.svg";
 import moment from "moment";
 import "./WidgetComponent.css";
 
-//determines the value of pChange and if change is positive or negative
+//displays information about a stock
 const StockWidget = ({ item }) => {
   const pChange = parseFloat(item.pChange).toFixed(2);
   const isChangePositive = pChange > 0;
@@ -77,7 +77,7 @@ const StockWidget = ({ item }) => {
     </Flex>
   );
 };
-//displaying stock data and nifty data
+
 const WidgetComponentContainer = () => {
   const navigate = useNavigate();
   const { widgetStocks, appVersion } = useWidgetContext();
@@ -86,10 +86,11 @@ const WidgetComponentContainer = () => {
   const [loading, setLoading] = useState(true);
   const [niftyData, setNiftyData] = useState({});
   const [direction, setDirection] = useState("next");
-  const now = moment();
+  const [currentTime, setCurrentTime] = useState(moment());
+  // fetches data from a local API endpoint and updates the niftyData
   const fetchNiftyData = async () => {
     try {
-      const response = await fetch("http://localhost:4000/api/get_nifty_data"); //fetch data from local API endpoint defined in express server
+      const response = await fetch("http://localhost:4000/api/get_nifty_data");
       const data = await response.json();
       setNiftyData(data.niftyData);
     } catch (e) {
@@ -98,7 +99,6 @@ const WidgetComponentContainer = () => {
   };
 
   const fetchData = async () => {
-    // Mock API call
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setLoading(false);
   };
@@ -106,6 +106,13 @@ const WidgetComponentContainer = () => {
   useEffect(() => {
     fetchData();
     fetchNiftyData();
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(moment());
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -119,17 +126,21 @@ const WidgetComponentContainer = () => {
     navigate("/home");
     window.electronAPI.createMainWindow();
   };
-  //pageIndex arguement renders a page component (stock data or nifty data) based on the value of the pageIndex
+
+  //represents pages in carousel, will show stock data or nifty data according to pageIndex
   const renderPage = (pageIndex) => {
-    if (pageIndex === 0) {
-      return (
-        <div
-          className="carousel-page no-drag"
-          style={{ flex: 1, overflow: "hidden" }}
-        >
-          <ScrollArea style={{ height: "100%" }}>
-            <Flex direction="column" gap="xs">
-              {loading ? (
+    return (
+      <div
+        className="carousel-page no-drag"
+        style={{ flex: 1, overflow: "hidden" }}
+      >
+        <Text size="md" align="left" mb="xs">
+          {currentTime.format("HH:mm:ss a")}
+        </Text>
+        <ScrollArea style={{ height: "calc(100% - 20px)" }}>
+          <Flex direction="column" gap="xs">
+            {pageIndex === 0 ? (
+              loading ? (
                 <Flex
                   justify="center"
                   align="center"
@@ -141,59 +152,49 @@ const WidgetComponentContainer = () => {
                 watchlist.map((stock) => (
                   <StockWidget key={stock.symbol} item={stock} />
                 ))
-              )}
-            </Flex>
-          </ScrollArea>
-        </div>
-      );
-    } else {
-      return (
-        <div
-          className="carousel-page no-drag"
-          style={{ flex: 1, overflow: "hidden" }}
-        >
-          <ScrollArea style={{ height: "100%" }}>
-            <Flex direction="column" gap="xs">
-              <Flex
-                shadow="md"
-                bg={NEUTRALS[1100]}
-                p="5px"
-                gap="xs"
-                align="center"
-                style={{
-                  flex: 1,
-                  border: `1px solid ${NEUTRALS[900]}`,
-                  borderRadius: "4px",
-                }}
-              >
-                <Flex direction="column" style={{ flex: 1 }}>
-                  <Text size="xs">{now.format("HH:mm:ss a")}</Text>
-                  <Text fw={600} size="sm">
-                    {niftyData.index}
-                  </Text>
-                </Flex>
-                <Flex direction="column" align="flex-end">
-                  <Text fw={900} size="xs" ta="right">
-                    ₹{niftyData.last}
-                  </Text>
-                  <Flex align="center">
-                    {niftyData.percentChange > 0 ? (
-                      <IconArrowUpRight color="green" />
-                    ) : (
-                      <IconArrowDownRight color="red" />
-                    )}
-                    <Text fw={500} ta="right" size="xs">
-                      {niftyData.percentChange}%
+              )
+            ) : (
+              <>
+                <Flex
+                  shadow="md"
+                  bg={NEUTRALS[1100]}
+                  p="5px"
+                  gap="xs"
+                  align="center"
+                  style={{
+                    flex: 1,
+                    border: `1px solid ${NEUTRALS[900]}`,
+                    borderRadius: "4px",
+                  }}
+                >
+                  <Flex direction="column" style={{ flex: 1 }}>
+                    <Text fw={600} size="sm">
+                      {niftyData.index}
                     </Text>
                   </Flex>
+                  <Flex direction="column" align="flex-end">
+                    <Text fw={900} size="xs" ta="right">
+                      ₹{niftyData.last}
+                    </Text>
+                    <Flex align="center">
+                      {niftyData.percentChange > 0 ? (
+                        <IconArrowUpRight color="green" />
+                      ) : (
+                        <IconArrowDownRight color="red" />
+                      )}
+                      <Text fw={500} ta="right" size="xs">
+                        {niftyData.percentChange}%
+                      </Text>
+                    </Flex>
+                  </Flex>
                 </Flex>
-              </Flex>
-              <Text align="center">Contact us at 7775544332</Text>
-            </Flex>
-          </ScrollArea>
-        </div>
-      );
-    }
+                <Text align="center">Contact us at 7775544332</Text>
+              </>
+            )}
+          </Flex>
+        </ScrollArea>
+      </div>
+    );
   };
 
   return (

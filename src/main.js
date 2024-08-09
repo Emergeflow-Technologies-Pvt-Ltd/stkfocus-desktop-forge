@@ -8,19 +8,8 @@ const {
 } = require("electron");
 const { updateElectronApp, UpdateSourceType } = require("update-electron-app");
 const log = require("electron-log");
-// Check for updates as soon as the app is ready
-updateElectronApp({
-  updateSource: {
-    host: "https://update.electronjs.org",
-    type: UpdateSourceType.ElectronPublicUpdateService,
-    repo: "Emergeflow-Technologies-Pvt-Ltd/stkfocus-desktop-forge",
-  },
-  logger: log,
-});
 const expApp = require("./new_server");
 console.log("app", expApp);
-
-// Initialize logging
 
 log.info("App starting...");
 
@@ -31,9 +20,19 @@ if (require("electron-squirrel-startup")) {
 let mainWindow;
 let widgetWindow;
 let watchlist = ["INFY", "RELIANCE"];
+let isAlwaysOnTop = false;
 
 const appPath = app.getAppPath();
 console.log("appPath", appPath);
+
+updateElectronApp({
+  updateSource: {
+    host: "https://update.electronjs.org",
+    type: UpdateSourceType.ElectronPublicUpdateService,
+    repo: "Emergeflow-Technologies-Pvt-Ltd/stkfocus-desktop-forge",
+  },
+  logger: log,
+});
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -72,7 +71,7 @@ const createWidgetWindow = () => {
     x: width - widgetWidth,
     y: yPosition,
     frame: false,
-    alwaysOnTop: true,
+    alwaysOnTop: isAlwaysOnTop,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       contextIsolation: true,
@@ -87,7 +86,6 @@ const createWidgetWindow = () => {
   });
 };
 
-//window taskbar menu
 const createMenu = () => {
   const menuTemplate = [
     {
@@ -149,8 +147,6 @@ app.whenReady().then(() => {
     });
   });
 
-  // spawn("node", ["./server/server.js"]);
-
   createWindow();
   createMenu();
   app.on("activate", () => {
@@ -198,6 +194,7 @@ ipcMain.on("create-main-window", () => {
 ipcMain.handle("get-app-version", () => {
   return app.getVersion();
 });
+
 ipcMain.on("check-for-updates", () => {
   log.info("Manual update check triggered.");
   updateElectronApp({
@@ -209,21 +206,14 @@ ipcMain.on("check-for-updates", () => {
     logger: log,
   });
 });
-// // Auto-update event handlers
-// autoUpdater.on("update-available", () => {
-//   log.info("Update available.");
-//   if (mainWindow) {
-//     mainWindow.webContents.send("update_available");
-//   }
-// });
 
-// autoUpdater.on("update-downloaded", () => {
-//   log.info("Update downloaded.");
-//   if (mainWindow) {
-//     mainWindow.webContents.send("update_downloaded");
-//   }
-// });
+ipcMain.handle("get-always-on-top", () => {
+  return widgetWindow ? widgetWindow.isAlwaysOnTop() : isAlwaysOnTop;
+});
 
-// ipcMain.on("restart_app", () => {
-//   autoUpdater.quitAndInstall();
-// });
+ipcMain.handle("set-always-on-top", (event, value) => {
+  isAlwaysOnTop = value;
+  if (widgetWindow) {
+    widgetWindow.setAlwaysOnTop(value);
+  }
+});

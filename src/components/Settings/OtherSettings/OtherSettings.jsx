@@ -1,5 +1,5 @@
 import { Flex, Text, Checkbox, Group } from "@mantine/core";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ReactComponent as InfoIcon } from "../../../../assets/info.svg";
 const STOCK_MARKETS = {
   NSE: "NSE",
@@ -10,6 +10,16 @@ function OtherSettings() {
     STOCK_MARKETS.NSE,
   ]);
   const [alwaysOnTop, setAlwaysOnTop] = useState(false);
+  useEffect(() => {
+    // Get the initial alwaysOnTop state when the component mounts
+    window.electronAPI.getAlwaysOnTop().then(setAlwaysOnTop);
+  }, []);
+  const handleAlwaysOnTopChange = (event) => {
+    const newValue = event.currentTarget.checked;
+    setAlwaysOnTop(newValue);
+    window.electronAPI.setAlwaysOnTop(newValue);
+  };
+
   return (
     <Flex direction={"column"} gap={"2rem"}>
       {/* <Flex direction={'column'} gap={'10px'}>
@@ -50,7 +60,7 @@ function OtherSettings() {
           variant="outline"
           radius="xs"
           checked={alwaysOnTop}
-          onChange={(event) => setAlwaysOnTop(event.currentTarget.checked)}
+          onChange={handleAlwaysOnTopChange}
         />
       </Flex>
     </Flex>
